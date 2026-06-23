@@ -78,7 +78,7 @@ export TEST_RUNNER_LINPHONE_TEST_HA1="$LINPHONE_TEST_HA1"
 export TEST_RUNNER_LINPHONE_TEST_DOMAIN="$LINPHONE_TEST_DOMAIN"
 export TEST_RUNNER_LINPHONE_TEST_CONFIG_URI="$LINPHONE_TEST_CONFIG_URI"
 
-BUNDLE_ID="org.linphone.phone"
+BUNDLE_ID="com.zlink.softphone"
 PROJECT="LinphoneApp.xcodeproj"
 SCHEME="LinphoneAppUITests"
 TEST_CLASS="LinphoneAppUITests/MDMChatFeatureUITests"
@@ -87,8 +87,8 @@ TEST_CLASS="LinphoneAppUITests/MDMChatFeatureUITests"
 # previous test leaks into the next fresh install. We nuke these between
 # tests so each test really starts from scratch.
 APP_GROUPS=(
-  "group.org.linphone.phone.msgNotification"
-  "group.org.linphone.phone.linphoneExtension"
+  "group.com.zlink.softphone.msgNotification"
+  "group.com.zlink.softphone.linphoneExtension"
 )
 
 TESTS=(

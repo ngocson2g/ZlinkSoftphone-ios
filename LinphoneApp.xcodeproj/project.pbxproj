@@ -1946,7 +1946,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 6.2.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) -DUSE_CRASHLYTICS";
-				PRODUCT_BUNDLE_IDENTIFIER = org.linphone.phone.msgNotificationService;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zlink.softphone.msgNotificationService;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -1989,7 +1989,7 @@
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 6.2.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) -DUSE_CRASHLYTICS";
-				PRODUCT_BUNDLE_IDENTIFIER = org.linphone.phone.msgNotificationService;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zlink.softphone.msgNotificationService;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
@@ -2257,7 +2257,7 @@
 				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Linphone/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Linphone;
+				INFOPLIST_KEY_CFBundleDisplayName = "Zlink Softphone";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = YES;
 				INFOPLIST_KEY_ITSEncryptionExportComplianceCode = "b5cb085f-772a-4a4f-8c77-5d1332b1f93f";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "Deprecated - Prior to iOS 17 full calendar access is required";
@@ -2288,7 +2288,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MARKETING_VERSION = 6.2.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) -DUSE_CRASHLYTICS";
-				PRODUCT_BUNDLE_IDENTIFIER = org.linphone.phone;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zlink.softphone;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
@@ -2319,7 +2319,7 @@
 				);
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Linphone/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Linphone;
+				INFOPLIST_KEY_CFBundleDisplayName = "Zlink Softphone";
 				INFOPLIST_KEY_ITSAppUsesNonExemptEncryption = YES;
 				INFOPLIST_KEY_ITSEncryptionExportComplianceCode = "b5cb085f-772a-4a4f-8c77-5d1332b1f93f";
 				INFOPLIST_KEY_NSCalendarsUsageDescription = "Deprecated - Prior to iOS 17 full calendar access is required";
@@ -2350,7 +2350,7 @@
 				MACOSX_DEPLOYMENT_TARGET = 13.3;
 				MARKETING_VERSION = 6.2.0;
 				OTHER_SWIFT_FLAGS = "$(inherited) -DUSE_CRASHLYTICS";
-				PRODUCT_BUNDLE_IDENTIFIER = org.linphone.phone;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zlink.softphone;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
@@ -2383,7 +2383,7 @@
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 6.2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.linphone.phone.linphoneExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zlink.softphone.linphoneExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -2417,7 +2417,7 @@
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 6.2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.linphone.phone.linphoneExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zlink.softphone.linphoneExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -2450,7 +2450,7 @@
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 6.2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.linphone.phone.intentsExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zlink.softphone.intentsExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -2486,7 +2486,7 @@
 				);
 				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MARKETING_VERSION = 6.2.0;
-				PRODUCT_BUNDLE_IDENTIFIER = org.linphone.phone.intentsExtension;
+				PRODUCT_BUNDLE_IDENTIFIER = com.zlink.softphone.intentsExtension;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;

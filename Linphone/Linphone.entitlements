@@ -11,14 +11,14 @@
 	<key>com.apple.security.application-groups</key>
 	<array>
 		<string>group.belledonne-communications.linphone</string>
-		<string>group.org.linphone.phone.linphoneExtension</string>
-		<string>group.org.linphone.phone.msgNotification</string>
+		<string>group.com.zlink.softphone.linphoneExtension</string>
+		<string>group.com.zlink.softphone.msgNotification</string>
 	</array>
 	<key>com.apple.security.files.user-selected.read-only</key>
 	<true/>
 	<key>keychain-access-groups</key>
 	<array>
-		<string>$(AppIdentifierPrefix)org.linphone.phone</string>
+		<string>$(AppIdentifierPrefix)com.zlink.softphone</string>
 	</array>
 </dict>
 </plist>

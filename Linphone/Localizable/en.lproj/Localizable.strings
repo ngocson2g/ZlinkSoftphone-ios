@@ -236,7 +236,7 @@
 "conversation_end_to_end_encrypted_event_title" = "End-to-end encrypted conversation";
 "conversation_end_to_end_encrypted_event_subtitle" = "Messages in this conversation are e2e encrypted. Only your correspondent can decrypt them.";
 "conversation_end_to_end_encrypted_bottom_sheet_title" = "Guaranteed confidentiality";
-"conversation_end_to_end_encrypted_bottom_sheet_message" = "Thanks to end-to-end encryption technology in Linphone, messages, calls and meetings confidentiality are guaranteed. No-one can decrypt exchanged data, not even ourselves.";
+"conversation_end_to_end_encrypted_bottom_sheet_message" = "Thanks to end-to-end encryption technology in Zlink Softphone, messages, calls and meetings confidentiality are guaranteed. No-one can decrypt exchanged data, not even ourselves.";
 "conversation_ephemeral_messages_duration_disabled" = "Disabled";
 "conversation_ephemeral_messages_duration_multiple_days" = "%d days";
 "conversation_ephemeral_messages_duration_one_day" = "1 day";
@@ -345,13 +345,15 @@
 "generic_address_picker_suggestions_list_title" = "Suggestions";
 "help_about_advanced_title" = "Advanced";
 "help_about_check_for_update" = "Check update";
-"help_about_contribute_translations_title" = "Contribute on Linphone translation";
+"help_about_contribute_translations_title" = "Contribute on Zlink Softphone translation";
+"help_about_description" = "Zlink Softphone is an open source software under GNU General Public License V3.\n\nMore information at www.zlink.vn.";
+"help_about_license_title" = "Licence";
 "help_about_open_source_licenses_subtitle" = "© Belledonne Communications 2010-2024";
 "help_about_open_source_licenses_title" = "GNU General Public License v3.0";
-"help_about_privacy_policy_subtitle" = "What information Linphone collects and uses";
+"help_about_privacy_policy_subtitle" = "What information Zlink Softphone collects and uses";
 "help_about_privacy_policy_title" = "Privacy policy";
-"help_about_title" = "About Linphone";
-"help_about_user_guide_title" = "Linphone user guide";
+"help_about_title" = "About Zlink Softphone";
+"help_about_user_guide_title" = "Zlink Softphone user guide";
 "help_about_user_guide_subtitle" = "Learn how to master all app features, step by step.";
 "help_about_version_title" = "Version";
 "help_dialog_update_available_message" = "A new version %@ is available. Do you want to update?";
@@ -393,7 +395,7 @@
 "manage_account_device_last_connection" = "Last connection:";
 "manage_account_device_remove" = "Remove";
 "manage_account_devices_title" = "Devices";
-"manage_account_dialog_international_prefix_help_message" = "Pick your country to allow Linphone to match your contacts.";
+"manage_account_dialog_international_prefix_help_message" = "Pick your country to allow Zlink Softphone to match your contacts.";
 "manage_account_dialog_remove_account_message" = "If you wish to delete your account permanently, go to: https://sip.linphone.org";
 "manage_account_dialog_remove_account_title" = "Sign out of your account?";
 "manage_account_outbound_proxy" = "Outbound SIP Proxy";
