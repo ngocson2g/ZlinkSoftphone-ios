@@ -22,13 +22,13 @@ jobs:
           xcode-version: latest-stable
 
       - name: Resolve Swift Packages
-        run: xcodebuild -resolvePackageDependencies -project LinphoneApp.xcodeproj -scheme LinphoneApp -derivedDataPath Build/
+        run: xcodebuild -resolvePackageDependencies -project LinphoneApp.xcodeproj -scheme Linphone -derivedDataPath Build/
 
       - name: Build Unsigned App
         run: |
           xcodebuild build \
             -project LinphoneApp.xcodeproj \
-            -scheme LinphoneApp \
+            -scheme Linphone \
             -configuration Release \
             -sdk iphoneos \
             -derivedDataPath Build/ \
