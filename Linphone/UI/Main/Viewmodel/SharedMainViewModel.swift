@@ -35,7 +35,7 @@ class SharedMainViewModel: ObservableObject {
 	@Published var generalTermsAccepted = false
 	@Published var displayProfileMode = false
 	@Published var defaultAvatar: URL?
-	@Published var indexView: Int = 0
+	@Published var indexView: Int = 1
 	@Published var increaseTrustLevelPopupAccepted = false
 	@Published var increaseTrustLevelPopupDeviceName = ""
 	@Published var increaseTrustLevelPopupDeviceAddress: Address?
@@ -79,7 +79,8 @@ class SharedMainViewModel: ObservableObject {
 		if preferences.object(forKey: indexViewKey) == nil {
 			preferences.set(indexView, forKey: indexViewKey)
 		} else {
-			indexView = preferences.integer(forKey: indexViewKey)
+			// Always default to 1 (Calls) when app launches instead of restoring saved state
+			indexView = 1
 		}
 		
 		if preferences.object(forKey: welcomeViewKey) == nil {
