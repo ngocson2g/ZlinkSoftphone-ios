@@ -27,9 +27,7 @@ struct WelcomePage1Fragment: View {
 			Spacer()
 			VStack {
 				Image("linphone")
-					.renderingMode(.template)
 					.resizable()
-					.foregroundStyle(Color.orangeMain500)
 					.frame(width: 100, height: 100)
 				Text(Bundle.main.displayName)
 					.welcome_text_style_gray_800(styleSize: 30)

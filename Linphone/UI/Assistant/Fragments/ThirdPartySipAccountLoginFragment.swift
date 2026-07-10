@@ -43,21 +43,22 @@ struct ThirdPartySipAccountLoginFragment: View {
 	@FocusState var isOutboundProxyFocused: Bool
 	
 	var body: some View {
-		GeometryReader { geometry in
-			ScrollViewReader { proxy in
-				ZStack {
-					FullScreenParticlesEffect()
-						.edgesIgnoringSafeArea(.all)
-					
-					VStack {
-						Spacer()
-						AnimatedBlueBottomBand()
-					}
-					.edgesIgnoringSafeArea(.bottom)
-					
-					if #available(iOS 16.4, *) {
-						ScrollView(.vertical) {
-							innerScrollView(geometry: geometry)
+		ZStack {
+			FullScreenParticlesEffect()
+				.ignoresSafeArea()
+			
+			VStack {
+				Spacer()
+				AnimatedBlueBottomBand()
+			}
+			.ignoresSafeArea()
+			
+			GeometryReader { geometry in
+				ScrollViewReader { proxy in
+					ZStack {
+						if #available(iOS 16.4, *) {
+							ScrollView(.vertical) {
+								innerScrollView(geometry: geometry)
 						}
 						.scrollBounceBehavior(.basedOnSize)
 						.onChange(of: isAuthIdFocused) { field in
@@ -412,10 +413,6 @@ struct ThirdPartySipAccountLoginFragment: View {
 			.frame(maxWidth: SharedMainViewModel.shared.maxWidth)
 			.padding(.horizontal)
 			.padding(.bottom)
-			
-
-			FullScreenParticlesEffect()
-			AnimatedBlueBottomBand()
 		}
 		.frame(minHeight: geometry.size.height)
 		.padding(.bottom, keyboard.currentHeight)
@@ -523,8 +520,8 @@ struct AnimatedBlueBottomBand: View {
 			gradient: Gradient(colors: [
 				Color.clear,
 				animate 
-					? Color(red: 10/255.0, green: 40/255.0, blue: 120/255.0).opacity(0.8) 
-					: Color(red: 0/255.0, green: 15/255.0, blue: 60/255.0).opacity(1.0)
+					? Color(red: 25/255.0, green: 110/255.0, blue: 210/255.0).opacity(0.8) 
+					: Color(red: 15/255.0, green: 80/255.0, blue: 180/255.0).opacity(0.9)
 			]),
 			startPoint: .top,
 			endPoint: .bottom

@@ -29,10 +29,8 @@ struct SplashScreen: View {
 
 			Image("linphone")
 				.resizable()
-				.renderingMode(.template)
 				.aspectRatio(contentMode: .fit)
 				.frame(width: 240, height: 128)
-				.foregroundColor(ThemeManager.shared.currentTheme.main500)
 
 			ProgressView()
 				.controlSize(.small)
