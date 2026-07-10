@@ -405,6 +405,7 @@ struct ThirdPartySipAccountLoginFragment: View {
 			.padding(.bottom)
 			
 
+			LoginBackgroundEffect()
 		}
 		.frame(minHeight: geometry.size.height)
 		.padding(.bottom, keyboard.currentHeight)
@@ -413,4 +414,48 @@ struct ThirdPartySipAccountLoginFragment: View {
 
 #Preview {
 	ThirdPartySipAccountLoginFragment(accountLoginViewModel: AccountLoginViewModel())
+}
+
+struct LoginBackgroundEffect: View {
+	@State private var animate = false
+	
+	var body: some View {
+		ZStack {
+			// Subtle gradient
+			LinearGradient(
+				gradient: Gradient(colors: [Color.orangeMain500.opacity(0.15), Color.clear]),
+				startPoint: .bottom,
+				endPoint: .top
+			)
+			.frame(height: 150)
+			
+			// Floating Tech Particles
+			GeometryReader { geometry in
+				ZStack {
+					ForEach(0..<6, id: \.self) { i in
+						Circle()
+							.fill(Color.orangeMain500.opacity(Double.random(in: 0.1...0.3)))
+							.frame(width: CGFloat.random(in: 30...80))
+							.blur(radius: 8)
+							.offset(
+								x: animate ? CGFloat.random(in: -geometry.size.width/2...geometry.size.width/2) : CGFloat.random(in: -geometry.size.width/2...geometry.size.width/2),
+								y: animate ? CGFloat.random(in: -50...50) : CGFloat.random(in: -20...80)
+							)
+							.animation(
+								Animation.easeInOut(duration: Double.random(in: 4...8))
+									.repeatForever(autoreverses: true)
+									.delay(Double.random(in: 0...2)),
+								value: animate
+							)
+					}
+				}
+				.frame(width: geometry.size.width, height: geometry.size.height)
+			}
+		}
+		.frame(height: 150)
+		.allowsHitTesting(false)
+		.onAppear {
+			animate = true
+		}
+	}
 }
