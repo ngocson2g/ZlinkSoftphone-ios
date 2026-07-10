@@ -85,7 +85,10 @@ final class MagicSearchSingleton: ObservableObject {
 						} else if let phoneNumber = searchResult.phoneNumber,
 								  !lastSearchFriend.contains(where: { $0.phoneNumber == phoneNumber }) {
 							lastSearchFriend.append(searchResult)
-						}
+						} else if searchResult.address == nil && searchResult.phoneNumber == nil,
+                                  !lastSearchFriend.contains(where: { $0.friend === searchResult.friend }) {
+                            lastSearchFriend.append(searchResult)
+                        }
 					} else if searchResult.friend != nil && (searchResult.hasSourceFlag(source: .RemoteCardDAV) || searchResult.friend?.friendList?.type == .CardDAV || searchResult.hasSourceFlag(source: .LdapServers)) {
 						lastSearchFriend.append(searchResult)
 					} else {
