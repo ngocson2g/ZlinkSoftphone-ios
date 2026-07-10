@@ -143,7 +143,7 @@ struct CSVImportReportView: View {
                 }
             }
             .padding()
-            .background(Color.grayMain2c100)
+            .background(Color(.systemGray6))
             
             VStack(spacing: 16) {
                 Text("Successfully parsed \(result.totalParsed) rows.")
@@ -190,7 +190,7 @@ struct CSVImportReportView: View {
             }
         }
         .frame(maxWidth: 300)
-        .background(Color.grayMain2c50)
+        .background(Color.white)
         .cornerRadius(12)
         .shadow(radius: 10)
     }
