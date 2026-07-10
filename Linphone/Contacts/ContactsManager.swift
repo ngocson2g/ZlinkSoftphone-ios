@@ -890,16 +890,26 @@ class CSVContactImporter {
                     // Search in existing lists
                     if let linphoneFL = ContactsManager.shared.linphoneFriendList {
                         existingFriend = linphoneFL.friends.first { friend in
-                            friend.phoneNumbers.contains(where: {
-                                core.defaultAccount?.normalizePhoneNumber(username: $0) == core.defaultAccount?.normalizePhoneNumber(username: phone)
-                            })
+                            friend.phoneNumbers.contains { existingPhone in
+                                if let acc = core.defaultAccount,
+                                   let norm1 = acc.normalizePhoneNumber(username: existingPhone),
+                                   let norm2 = acc.normalizePhoneNumber(username: phone) {
+                                    return norm1 == norm2
+                                }
+                                return existingPhone == phone
+                            }
                         }
                     }
                     if existingFriend == nil, let nativeFL = ContactsManager.shared.friendList {
                         existingFriend = nativeFL.friends.first { friend in
-                            friend.phoneNumbers.contains(where: {
-                                core.defaultAccount?.normalizePhoneNumber(username: $0) == core.defaultAccount?.normalizePhoneNumber(username: phone)
-                            })
+                            friend.phoneNumbers.contains { existingPhone in
+                                if let acc = core.defaultAccount,
+                                   let norm1 = acc.normalizePhoneNumber(username: existingPhone),
+                                   let norm2 = acc.normalizePhoneNumber(username: phone) {
+                                    return norm1 == norm2
+                                }
+                                return existingPhone == phone
+                            }
                         }
                     }
                     
