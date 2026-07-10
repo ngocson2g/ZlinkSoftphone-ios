@@ -45,7 +45,7 @@ class EditContactViewModel: ObservableObject {
 			let familyNameTmp = (self.selectedEditFriend == nil ? "" : self.selectedEditFriend!.vcard?.familyName) ?? ""
 			let organizationTmp = self.selectedEditFriend == nil ? "" : self.selectedEditFriend!.organization
 			let jobTitleTmp = self.selectedEditFriend == nil ? "" : self.selectedEditFriend!.jobTitle
-			let noteTmp = self.selectedEditFriend == nil ? "" : self.selectedEditFriend!.refKey ?? ""
+			let noteTmp = self.selectedEditFriend == nil ? "" : self.selectedEditFriend!.note
 			
 			var sipAddressesTmp: [String] = []
 			var phoneNumbersTmp: [String] = []
