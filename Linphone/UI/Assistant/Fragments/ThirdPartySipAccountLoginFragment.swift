@@ -404,11 +404,7 @@ struct ThirdPartySipAccountLoginFragment: View {
 			.padding(.horizontal)
 			.padding(.bottom)
 			
-			Image("mountain2")
-				.resizable()
-				.scaledToFill()
-				.frame(width: geometry.size.width, height: 60)
-				.clipped()
+
 		}
 		.frame(minHeight: geometry.size.height)
 		.padding(.bottom, keyboard.currentHeight)
