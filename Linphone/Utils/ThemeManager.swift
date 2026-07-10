@@ -34,11 +34,11 @@ final class ThemeManager: ObservableObject {
 	static let shared = ThemeManager()
 	private let themeKey = "selectedTheme"
 	
-	@Published var currentTheme: Theme = ThemeManager.orange
+	@Published var currentTheme: Theme = ThemeManager.blue
 	
 	private init() {
 		let storedName = UserDefaults.standard.string(forKey: themeKey)
-		currentTheme = themes[storedName ?? ""] ?? ThemeManager.orange
+		currentTheme = themes[storedName ?? ""] ?? ThemeManager.blue
 	}
 	
 	func applyTheme(named name: String) {

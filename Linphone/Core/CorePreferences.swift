@@ -416,8 +416,8 @@ class CorePreferences: ObservableObject {
 	
 	var themeMainColor: String {
 		get {
-			let raw = config.getString(section: "ui", key: "theme_main_color", defaultString: "orange")
-			return safeString(raw, defaultValue: "orange")
+			let raw = config.getString(section: "ui", key: "theme_main_color", defaultString: "blue")
+			return safeString(raw, defaultValue: "blue")
 		}
 		set {
 			config.setString(section: "ui", key: "theme_main_color", value: newValue)
