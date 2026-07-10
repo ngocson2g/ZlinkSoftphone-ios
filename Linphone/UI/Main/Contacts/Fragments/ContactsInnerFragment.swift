@@ -17,11 +17,11 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-import SwiftUI
-import linphonesw
 
 struct ContactsInnerFragment: View {
 	
+import linphonesw
+import SwiftUI
 	@ObservedObject var sharedMainViewModel = SharedMainViewModel.shared
 	@ObservedObject var contactsManager = ContactsManager.shared
 	@ObservedObject var magicSearch = MagicSearchSingleton.shared
@@ -120,4 +120,77 @@ struct ContactsInnerFragment: View {
 
 #Preview {
 	ContactsInnerFragment(showingSheet: .constant(false), text: .constant(""))
+}
+
+struct CSVImportReportView: View {
+    @Binding var isPresented: Bool
+    var result: CSVImportResult
+    
+    var body: some View {
+        VStack(spacing: 0) {
+            HStack {
+                Text("CSV Import Report")
+                    .font(.headline)
+                    .foregroundColor(Color.orangeMain500)
+                Spacer()
+                Button(action: { isPresented = false }) {
+                    Image("x")
+                        .renderingMode(.template)
+                        .resizable()
+                        .frame(width: 20, height: 20)
+                        .foregroundColor(Color.grayMain2c600)
+                }
+            }
+            .padding()
+            .background(Color.grayMain2c100)
+            
+            VStack(spacing: 16) {
+                Text("Successfully parsed \(result.totalParsed) rows.")
+                    .font(.subheadline)
+                    .padding(.top, 10)
+                
+                if result.duplicatePhones.isEmpty {
+                    Text("No duplicates found. All contacts were imported cleanly.")
+                        .foregroundColor(.green)
+                        .multilineTextAlignment(.center)
+                        .padding()
+                } else {
+                    Text("Found \(result.duplicatePhones.count) duplicate(s). The names were overwritten and notes were merged for the following phones:")
+                        .font(.footnote)
+                        .foregroundColor(.orange)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                    
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 8) {
+                            ForEach(result.duplicatePhones, id: \.self) { phone in
+                                Text("• \(phone)")
+                                    .font(.system(size: 14, weight: .medium))
+                            }
+                        }
+                        .padding()
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                    }
+                    .frame(maxHeight: 200)
+                    .background(Color.white)
+                    .cornerRadius(8)
+                    .padding(.horizontal)
+                }
+                
+                Button(action: { isPresented = false }) {
+                    Text("Close")
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 40)
+                        .padding(.vertical, 10)
+                        .background(Color.orangeMain500)
+                        .cornerRadius(20)
+                }
+                .padding(.bottom, 20)
+            }
+        }
+        .frame(maxWidth: 300)
+        .background(Color.grayMain2c50)
+        .cornerRadius(12)
+        .shadow(radius: 10)
+    }
 }

@@ -20,6 +20,7 @@
 // swiftlint:disable type_body_length
 // swiftlint:disable line_length
 import SwiftUI
+import UniformTypeIdentifiers
 import linphonesw
 
 struct ContentView: View {
@@ -98,6 +99,9 @@ struct ContentView: View {
 	@State var showDeleteConversationHistoryPopup: Bool = false
 	
 	@State private var securitySheet = false
+	@State private var isShowingCSVImporter = false
+	@State private var isShowingCSVReport = false
+	@State private var csvImportResult = CSVImportResult()
 	
 	var body: some View {
 		GeometryReader { geometry in
@@ -660,6 +664,18 @@ struct ContentView: View {
 																		.frame(width: 25, height: 25, alignment: .leading)
 																		.padding(.all, 10)
 																}
+															}
+														}
+														
+														Divider()
+														
+														Button {
+															isMenuOpen = false
+															isShowingCSVImporter = true
+														} label: {
+															HStack {
+																Text("Import from CSV")
+																Spacer()
 															}
 														}
 													} label: {
@@ -2106,6 +2122,32 @@ struct ContentView: View {
 			}
 		}
 		.id(coreContext.reloadID)
+		.fileImporter(
+			isPresented: $isShowingCSVImporter,
+			allowedContentTypes: [.commaSeparatedText],
+			allowsMultipleSelection: false
+		) { result in
+			switch result {
+			case .success(let urls):
+				if let url = urls.first {
+					let gotAccess = url.startAccessingSecurityScopedResource()
+					defer {
+						if gotAccess {
+							url.stopAccessingSecurityScopedResource()
+						}
+					}
+					CSVContactImporter.importCSV(fileURL: url) { importResult in
+						self.csvImportResult = importResult
+						self.isShowingCSVReport = true
+					}
+				}
+			case .failure(let error):
+				print("File picker error: \(error)")
+			}
+		}
+		.sheet(isPresented: $isShowingCSVReport) {
+			CSVImportReportView(isPresented: $isShowingCSVReport, result: csvImportResult)
+		}
 	}
 	
 	func openMenu() {

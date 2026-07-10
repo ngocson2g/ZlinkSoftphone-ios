@@ -21,6 +21,7 @@
 // swiftlint:disable function_parameter_count
 
 import linphonesw
+import Foundation
 import Contacts
 import SwiftUI
 import ContactsUI
@@ -151,7 +152,8 @@ final class ContactsManager: ObservableObject {
 								displayName: contact.nickname,
 								sipAddresses: contact.instantMessageAddresses.map { $0.value.service.lowercased() == "SIP".lowercased() ? $0.value.username : "" },
 								phoneNumbers: contact.phoneNumbers.map { PhoneNumber(numLabel: $0.label ?? "", num: $0.value.stringValue)},
-								imageData: ""
+								imageData: "",
+								note: contact.note
 							)
 							
 							let imageThumbnail = UIImage(data: contact.thumbnailImageData ?? Data())
@@ -325,6 +327,7 @@ final class ContactsManager: ObservableObject {
 				if let vcard = friend.vcard {
 					vcard.givenName = contact.firstName
 					vcard.familyName = contact.lastName
+					vcard.note = contact.note
 				}
 				
 				friend.organization = contact.organizationName
@@ -553,7 +556,8 @@ final class ContactsManager: ObservableObject {
 								displayName: friend.address?.displayName ?? "",
 								sipAddresses: friend.addresses.map { $0.asStringUriOnly() },
 								phoneNumbers: friend.phoneNumbersWithLabel.map { PhoneNumber(numLabel: $0.label ?? "", num: $0.phoneNumber)},
-								imageData: ""
+								imageData: "",
+								note: friend.vcard?.note ?? ""
 							)
 							
 							let image: UIImage?
@@ -639,7 +643,8 @@ final class ContactsManager: ObservableObject {
 									displayName: friend.address?.displayName ?? "",
 									sipAddresses: friend.addresses.map { $0.asStringUriOnly() },
 									phoneNumbers: [],
-									imageData: ""
+									imageData: "",
+									note: friend.vcard?.note ?? ""
 								)
 								
 								let image = self.textToImage(firstName: friend.name ?? addressTmp, lastName: "")
@@ -784,7 +789,170 @@ struct Contact: Identifiable {
 	var sipAddresses: [String] = []
 	var phoneNumbers: [PhoneNumber] = []
 	var imageData: String
+	var note: String = ""
 }
 
 // swiftlint:enable line_length
 // swiftlint:enable function_parameter_count
+
+struct CSVImportResult {
+    var totalParsed: Int = 0
+    var duplicatePhones: [String] = [] // List of duplicate phones for the report
+}
+
+class CSVContactImporter {
+    
+    // Parses a CSV string and returns an array of dictionaries representing each row.
+    private static func parseCSV(content: String) -> [[String: String]] {
+        var result = [[String: String]]()
+        
+        // Handle different line endings
+        let lines = content.components(separatedBy: .newlines).filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+        
+        guard let headerLine = lines.first else { return result }
+        
+        // Simple comma split for now (can be enhanced for quoted strings)
+        let headers = headerLine.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespacesAndNewlines).lowercased() }
+        
+        for line in lines.dropFirst() {
+            let values = line.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            var rowDict = [String: String]()
+            for (index, header) in headers.enumerated() {
+                if index < values.count {
+                    rowDict[header] = values[index]
+                }
+            }
+            result.append(rowDict)
+        }
+        
+        return result
+    }
+    
+    static func importCSV(fileURL: URL, completion: @escaping (CSVImportResult) -> Void) {
+        var result = CSVImportResult()
+        
+        guard let content = try? String(contentsOf: fileURL, encoding: .utf8) else {
+            DispatchQueue.main.async { completion(result) }
+            return
+        }
+        
+        let rows = parseCSV(content: content)
+        result.totalParsed = rows.count
+        
+        let dispatchGroup = DispatchGroup()
+        let queue = DispatchQueue(label: "CSVImportQueue")
+        
+        queue.async {
+            for row in rows {
+                var phone = ""
+                var name = ""
+                var note = ""
+                var company = ""
+                var jobTitle = ""
+                
+                // Flexible header matching
+                for (key, value) in row {
+                    if key.contains("phone") || key.contains("số điện thoại") || key == "sdt" {
+                        phone = value
+                    } else if key.contains("name") || key.contains("tên") || key.contains("ho ten") {
+                        name = value
+                    } else if key.contains("note") || key.contains("ghi chú") {
+                        note = value
+                    } else if key.contains("company") || key.contains("công ty") {
+                        company = value
+                    } else if key.contains("job") || key.contains("title") || key.contains("chức vụ") {
+                        jobTitle = value
+                    }
+                }
+                
+                if phone.isEmpty { continue }
+                
+                // Split name
+                var firstName = name
+                var lastName = ""
+                let nameParts = name.components(separatedBy: " ")
+                if nameParts.count > 1 {
+                    lastName = nameParts.last ?? ""
+                    firstName = nameParts.dropLast().joined(separator: " ")
+                }
+                
+                dispatchGroup.enter()
+                
+                // Check if contact exists by phone number
+                ContactsManager.shared.coreContext.doOnCoreQueue { core in
+                    var existingFriend: Friend? = nil
+                    
+                    // Search in existing lists
+                    if let linphoneFL = ContactsManager.shared.linphoneFriendList {
+                        existingFriend = linphoneFL.friends.first { friend in
+                            friend.phoneNumbers.contains(where: {
+                                core.defaultAccount?.normalizePhoneNumber(username: $0) == core.defaultAccount?.normalizePhoneNumber(username: phone)
+                            })
+                        }
+                    }
+                    if existingFriend == nil, let nativeFL = ContactsManager.shared.friendList {
+                        existingFriend = nativeFL.friends.first { friend in
+                            friend.phoneNumbers.contains(where: {
+                                core.defaultAccount?.normalizePhoneNumber(username: $0) == core.defaultAccount?.normalizePhoneNumber(username: phone)
+                            })
+                        }
+                    }
+                    
+                    var finalNote = ""
+                    if let existing = existingFriend {
+                        result.duplicatePhones.append(phone)
+                        // Merge notes logic
+                        let existingNote = existing.vcard?.note ?? ""
+                        if !existingNote.isEmpty {
+                            if existingNote.contains("[Device]") || existingNote.contains("[CSV]") {
+                                finalNote = existingNote + "\n[CSV] " + note
+                            } else {
+                                finalNote = "[Device] " + existingNote + "\n[CSV] " + note
+                            }
+                        } else {
+                            finalNote = "[CSV] " + note
+                        }
+                    } else {
+                        finalNote = !note.isEmpty ? "[CSV] " + note : ""
+                    }
+                    
+                    let contact = Contact(
+                        identifier: existingFriend?.nativeUri ?? UUID().uuidString,
+                        firstName: firstName,
+                        lastName: lastName,
+                        organizationName: company,
+                        jobTitle: jobTitle,
+                        displayName: name,
+                        sipAddresses: [],
+                        phoneNumbers: [PhoneNumber(numLabel: "_$!<Mobile>!$_", num: phone)],
+                        imageData: "",
+                        note: finalNote
+                    )
+                    
+                    let friendListName = existingFriend?.friendList?.displayName ?? ContactsManager.shared.linphoneAddressBookFriendList
+                    
+                    let image = ContactsManager.shared.textToImage(firstName: name, lastName: "")
+                    
+                    ContactsManager.shared.saveImage(
+                        image: image,
+                        name: name,
+                        prefix: "-default",
+                        contact: contact,
+                        linphoneFriend: friendListName,
+                        existingFriend: existingFriend
+                    ) {
+                        dispatchGroup.leave()
+                    }
+                }
+            }
+            
+            dispatchGroup.notify(queue: .main) {
+                // Refresh contacts after import
+                ContactsManager.shared.coreContext.doOnCoreQueue { _ in
+                    MagicSearchSingleton.shared.searchForContacts()
+                }
+                completion(result)
+            }
+        }
+    }
+}

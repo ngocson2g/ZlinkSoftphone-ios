@@ -41,6 +41,7 @@ class ContactAvatarModel: ObservableObject, Identifiable {
 	var vcard: Vcard?
 	var organization: String = ""
 	var jobTitle: String = ""
+	@Published var note: String = ""
 	
 	@Published var photo: String = ""
 	@Published var lastPresenceInfo: String = ""
@@ -81,6 +82,7 @@ class ContactAvatarModel: ObservableObject, Identifiable {
 			let vcardTmp = friend?.vcard ?? nil
 			let organizationTmp = friend?.organization ?? ""
 			let jobTitleTmp = friend?.jobTitle ?? ""
+			let noteTmp = friend?.vcard?.note ?? ""
 			var photoTmp = friend?.photo ?? ""
 			
 			if friend?.friendList?.type == .CardDAV && friend?.photo?.isEmpty == false {
@@ -130,6 +132,7 @@ class ContactAvatarModel: ObservableObject, Identifiable {
 				self.vcard = vcardTmp
 				self.organization = organizationTmp
 				self.jobTitle = jobTitleTmp
+				self.note = noteTmp
 				self.photo = photoTmp
 				self.lastPresenceInfo = lastPresenceInfoTmp
 				self.presenceStatus = presenceStatusTmp
