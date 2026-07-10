@@ -891,9 +891,9 @@ class CSVContactImporter {
                     if let linphoneFL = ContactsManager.shared.linphoneFriendList {
                         existingFriend = linphoneFL.friends.first { friend in
                             friend.phoneNumbers.contains { existingPhone in
-                                if let acc = core.defaultAccount,
-                                   let norm1 = acc.normalizePhoneNumber(username: existingPhone),
-                                   let norm2 = acc.normalizePhoneNumber(username: phone) {
+                                if let acc = core.defaultAccount {
+                                    let norm1 = acc.normalizePhoneNumber(username: existingPhone)
+                                    let norm2 = acc.normalizePhoneNumber(username: phone)
                                     return norm1 == norm2
                                 }
                                 return existingPhone == phone
@@ -903,9 +903,9 @@ class CSVContactImporter {
                     if existingFriend == nil, let nativeFL = ContactsManager.shared.friendList {
                         existingFriend = nativeFL.friends.first { friend in
                             friend.phoneNumbers.contains { existingPhone in
-                                if let acc = core.defaultAccount,
-                                   let norm1 = acc.normalizePhoneNumber(username: existingPhone),
-                                   let norm2 = acc.normalizePhoneNumber(username: phone) {
+                                if let acc = core.defaultAccount {
+                                    let norm1 = acc.normalizePhoneNumber(username: existingPhone)
+                                    let norm2 = acc.normalizePhoneNumber(username: phone)
                                     return norm1 == norm2
                                 }
                                 return existingPhone == phone
