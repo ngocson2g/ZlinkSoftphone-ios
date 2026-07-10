@@ -327,7 +327,6 @@ final class ContactsManager: ObservableObject {
 				if let vcard = friend.vcard {
 					vcard.givenName = contact.firstName
 					vcard.familyName = contact.lastName
-					vcard.note = contact.note
 				}
 				
 				friend.organization = contact.organizationName
@@ -557,7 +556,7 @@ final class ContactsManager: ObservableObject {
 								sipAddresses: friend.addresses.map { $0.asStringUriOnly() },
 								phoneNumbers: friend.phoneNumbersWithLabel.map { PhoneNumber(numLabel: $0.label ?? "", num: $0.phoneNumber)},
 								imageData: "",
-								note: friend.vcard?.note ?? ""
+								note: ""
 							)
 							
 							let image: UIImage?
@@ -644,7 +643,7 @@ final class ContactsManager: ObservableObject {
 									sipAddresses: friend.addresses.map { $0.asStringUriOnly() },
 									phoneNumbers: [],
 									imageData: "",
-									note: friend.vcard?.note ?? ""
+									note: ""
 								)
 								
 								let image = self.textToImage(firstName: friend.name ?? addressTmp, lastName: "")
@@ -902,7 +901,7 @@ class CSVContactImporter {
                     if let existing = existingFriend {
                         result.duplicatePhones.append(phone)
                         // Merge notes logic
-                        let existingNote = existing.vcard?.note ?? ""
+                        let existingNote = "" // friend.vcard doesn't support note directly
                         if !existingNote.isEmpty {
                             if existingNote.contains("[Device]") || existingNote.contains("[CSV]") {
                                 finalNote = existingNote + "\n[CSV] " + note

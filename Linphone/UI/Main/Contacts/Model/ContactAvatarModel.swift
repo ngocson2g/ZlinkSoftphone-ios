@@ -82,7 +82,7 @@ class ContactAvatarModel: ObservableObject, Identifiable {
 			let vcardTmp = friend?.vcard ?? nil
 			let organizationTmp = friend?.organization ?? ""
 			let jobTitleTmp = friend?.jobTitle ?? ""
-			let noteTmp = friend?.vcard?.note ?? ""
+			let noteTmp = ""
 			var photoTmp = friend?.photo ?? ""
 			
 			if friend?.friendList?.type == .CardDAV && friend?.photo?.isEmpty == false {
