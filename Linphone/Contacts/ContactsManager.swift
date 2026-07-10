@@ -329,7 +329,9 @@ final class ContactsManager: ObservableObject {
 					vcard.familyName = contact.lastName
 				}
 				
-				friend.organization = contact.organizationName
+				// Workaround: Vcard in Linphone SDK doesn't expose 'note'.
+				// Store the note in the organization field so it's saved and can be filtered.
+				friend.organization = (contact.organizationName.isEmpty ? "" : contact.organizationName + " - ") + contact.note
 				friend.jobTitle = contact.jobTitle
 				
 				// Clear existing addresses and add new ones
