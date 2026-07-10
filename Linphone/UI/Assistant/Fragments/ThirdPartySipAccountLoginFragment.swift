@@ -46,6 +46,15 @@ struct ThirdPartySipAccountLoginFragment: View {
 		GeometryReader { geometry in
 			ScrollViewReader { proxy in
 				ZStack {
+					FullScreenParticlesEffect()
+						.edgesIgnoringSafeArea(.all)
+					
+					VStack {
+						Spacer()
+						AnimatedBlueBottomBand()
+					}
+					.edgesIgnoringSafeArea(.bottom)
+					
 					if #available(iOS 16.4, *) {
 						ScrollView(.vertical) {
 							innerScrollView(geometry: geometry)
@@ -405,7 +414,8 @@ struct ThirdPartySipAccountLoginFragment: View {
 			.padding(.bottom)
 			
 
-			LoginBackgroundEffect()
+			FullScreenParticlesEffect()
+			AnimatedBlueBottomBand()
 		}
 		.frame(minHeight: geometry.size.height)
 		.padding(.bottom, keyboard.currentHeight)
@@ -416,46 +426,117 @@ struct ThirdPartySipAccountLoginFragment: View {
 	ThirdPartySipAccountLoginFragment(accountLoginViewModel: AccountLoginViewModel())
 }
 
-struct LoginBackgroundEffect: View {
+class ParticleSystem: ObservableObject {
+	struct Particle {
+		var x: Double
+		var y: Double
+		var vx: Double
+		var vy: Double
+		var radius: Double
+	}
+	
+	var particles: [Particle] = []
+	var lastUpdate: TimeInterval = 0
+	
+	func setup(size: CGSize) {
+		if !particles.isEmpty { return }
+		for _ in 0..<30 {
+			particles.append(Particle(
+				x: Double.random(in: 0...Double(size.width)),
+				y: Double.random(in: 0...Double(size.height)),
+				vx: Double.random(in: -15...15),
+				vy: Double.random(in: -15...15),
+				radius: Double.random(in: 1.5...3.0)
+			))
+		}
+	}
+	
+	func update(time: TimeInterval, size: CGSize) {
+		if lastUpdate == 0 {
+			lastUpdate = time
+			return
+		}
+		let dt = time - lastUpdate
+		lastUpdate = time
+		
+		for i in 0..<particles.count {
+			var p = particles[i]
+			p.x += p.vx * dt
+			p.y += p.vy * dt
+			
+			if p.x < 0 { p.x = 0; p.vx *= -1 }
+			if p.x > Double(size.width) { p.x = Double(size.width); p.vx *= -1 }
+			if p.y < 0 { p.y = 0; p.vy *= -1 }
+			if p.y > Double(size.height) { p.y = Double(size.height); p.vy *= -1 }
+			
+			particles[i] = p
+		}
+	}
+}
+
+struct FullScreenParticlesEffect: View {
+	@StateObject private var system = ParticleSystem()
+	
+	var body: some View {
+		if #available(iOS 15.0, *) {
+			TimelineView(.animation) { timeline in
+				Canvas { context, size in
+					system.setup(size: size)
+					system.update(time: timeline.date.timeIntervalSinceReferenceDate, size: size)
+					
+					let maxDist: Double = 120.0
+					
+					// Draw connections
+					for i in 0..<system.particles.count {
+						for j in (i+1)...<system.particles.count {
+							let p1 = system.particles[i]
+							let p2 = system.particles[j]
+							let dist = hypot(p1.x - p2.x, p1.y - p2.y)
+							if dist < maxDist {
+								var path = Path()
+								path.move(to: CGPoint(x: p1.x, y: p1.y))
+								path.addLine(to: CGPoint(x: p2.x, y: p2.y))
+								let opacity = 1.0 - (dist / maxDist)
+								context.stroke(path, with: .color(Color(red: 30/255.0, green: 136/255.0, blue: 229/255.0).opacity(opacity * 0.4)), lineWidth: 1)
+							}
+						}
+					}
+					
+					// Draw particles
+					for p in system.particles {
+						let rect = CGRect(x: p.x - p.radius, y: p.y - p.radius, width: p.radius*2, height: p.radius*2)
+						context.fill(Path(ellipseIn: rect), with: .color(Color(red: 30/255.0, green: 136/255.0, blue: 229/255.0).opacity(0.6)))
+					}
+				}
+			}
+		} else {
+			EmptyView()
+		}
+	}
+}
+
+struct AnimatedBlueBottomBand: View {
 	@State private var animate = false
 	
 	var body: some View {
-		ZStack {
-			// Subtle gradient
-			LinearGradient(
-				gradient: Gradient(colors: [Color.orangeMain500.opacity(0.15), Color.clear]),
-				startPoint: .bottom,
-				endPoint: .top
-			)
-			.frame(height: 150)
-			
-			// Floating Tech Particles
-			GeometryReader { geometry in
-				ZStack {
-					ForEach(0..<6, id: \.self) { i in
-						Circle()
-							.fill(Color.orangeMain500.opacity(Double.random(in: 0.1...0.3)))
-							.frame(width: CGFloat.random(in: 30...80))
-							.blur(radius: 8)
-							.offset(
-								x: animate ? CGFloat.random(in: -geometry.size.width/2...geometry.size.width/2) : CGFloat.random(in: -geometry.size.width/2...geometry.size.width/2),
-								y: animate ? CGFloat.random(in: -50...50) : CGFloat.random(in: -20...80)
-							)
-							.animation(
-								Animation.easeInOut(duration: Double.random(in: 4...8))
-									.repeatForever(autoreverses: true)
-									.delay(Double.random(in: 0...2)),
-								value: animate
-							)
-					}
-				}
-				.frame(width: geometry.size.width, height: geometry.size.height)
-			}
-		}
-		.frame(height: 150)
-		.allowsHitTesting(false)
+		LinearGradient(
+			gradient: Gradient(colors: [
+				Color.clear,
+				animate 
+					? Color(red: 10/255.0, green: 40/255.0, blue: 120/255.0).opacity(0.8) 
+					: Color(red: 0/255.0, green: 15/255.0, blue: 60/255.0).opacity(1.0)
+			]),
+			startPoint: .top,
+			endPoint: .bottom
+		)
+		.frame(height: 180)
+		.animation(
+			Animation.easeInOut(duration: 4.0).repeatForever(autoreverses: true),
+			value: animate
+		)
 		.onAppear {
 			animate = true
 		}
+		.allowsHitTesting(false)
 	}
 }
