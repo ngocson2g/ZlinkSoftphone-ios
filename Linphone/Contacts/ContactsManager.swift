@@ -327,6 +327,8 @@ final class ContactsManager: ObservableObject {
 				if let vcard = friend.vcard {
 					vcard.givenName = contact.firstName
 					vcard.familyName = contact.lastName
+				}
+				
 				// Workaround: Vcard in Linphone SDK doesn't expose 'note'.
 				// Store the note in the refKey field so it's saved silently and can be filtered.
 				friend.refKey = contact.note
