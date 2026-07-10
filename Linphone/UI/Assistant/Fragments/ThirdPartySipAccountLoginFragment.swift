@@ -347,6 +347,9 @@ struct ThirdPartySipAccountLoginFragment: View {
 								.stroke(isOutboundProxyFocused ? Color.orangeMain500 : Color.gray200, lineWidth: 1)
 						)
 						.focused($isOutboundProxyFocused)
+						.onChange(of: accountLoginViewModel.outboundProxy) { newValue in
+							accountLoginViewModel.sipProxyUrl = newValue
+						}
 						.padding(.leading, 30)
 						.padding(.bottom, 4)
 				}
@@ -368,123 +371,7 @@ struct ThirdPartySipAccountLoginFragment: View {
 				}
 				.padding(.bottom, 15)
 				
-				// MARK: - Advanced Settings (hidden by default, keeps old fields)
-                HStack(alignment: .center) {
-                    Text("settings_advanced_title")
-                        .default_text_style_800(styleSize: 18)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                    
-                    Spacer()
-                    
-                    Image(advancedSettingsIsOpen ? "caret-up" : "caret-down")
-                        .renderingMode(.template)
-                        .resizable()
-                        .foregroundStyle(Color.grayMain2c600)
-                        .frame(width: 25, height: 25, alignment: .leading)
-                        .padding(.all, 10)
-                }
-                .padding(.top, 10)
-                .padding(.bottom, 10)
-                .background(.white)
-                .onTapGesture {
-                    withAnimation {
-                        advancedSettingsIsOpen.toggle()
-                    }
-                }
-                
-                if advancedSettingsIsOpen {
-					VStack(alignment: .leading) {
-						// Transport protocol
-						Text(String(localized: "assistant_sip_account_transport_protocol"))
-							.default_text_style_700(styleSize: 15)
-							.padding(.bottom, -5)
-						
-						Menu {
-							Button("TLS") {accountLoginViewModel.transportType = "TLS"}
-							Button("TCP") {accountLoginViewModel.transportType = "TCP"}
-							Button("UDP") {accountLoginViewModel.transportType = "UDP"}
-						} label: {
-							Text(accountLoginViewModel.transportType)
-								.default_text_style(styleSize: 15)
-								.frame(maxWidth: .infinity, alignment: .leading)
-							Image("caret-down")
-								.renderingMode(.template)
-								.resizable()
-								.foregroundStyle(Color.grayMain2c500)
-								.frame(width: 20, height: 20)
-						}
-						.frame(height: 25)
-						.padding(.horizontal, 20)
-						.padding(.vertical, 15)
-						.cornerRadius(60)
-						.overlay(
-							RoundedRectangle(cornerRadius: 60)
-								.inset(by: 0.5)
-								.stroke(Color.gray200, lineWidth: 1)
-						)
-						.padding(.bottom)
-                    }
-					.padding(.bottom)
-					
-                    VStack(alignment: .leading) {
-                        Text("account_settings_sip_proxy_url_title")
-                            .default_text_style_700(styleSize: 15)
-                            .padding(.bottom, -5)
-                        
-                        TextField("account_settings_sip_proxy_url_title", text: $accountLoginViewModel.sipProxyUrl)
-							.id(2)
-                            .default_text_style(styleSize: 15)
-                            .frame(height: 25)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 15)
-                            .background(.white)
-                            .cornerRadius(60)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 60)
-                                    .inset(by: 0.5)
-                                    .stroke(isSipProxyUrlFocused ? Color.orangeMain500 : Color.gray200, lineWidth: 1)
-                            )
-                            .focused($isSipProxyUrlFocused)
-                    }
-                    .padding(.bottom)
-					
-					VStack(alignment: .leading) {
-						HStack {
-							Text("account_settings_outbound_proxy_title")
-								.default_text_style_700(styleSize: 15)
-								.padding(.bottom, -5)
-								.frame(maxWidth: .infinity, alignment: .leading)
-							
-							Button(action: {
-								self.isShowOutboundProxyPopup = true
-							}, label: {
-								Image("info")
-									.renderingMode(.template)
-									.resizable()
-									.foregroundStyle(Color.grayMain2c500)
-									.frame(width: 25, height: 25)
-							})
-							.padding(.trailing, 10)
-						}
-						.padding(.bottom, -5)
-						
-						TextField("account_settings_outbound_proxy_title", text: $accountLoginViewModel.outboundProxy)
-							.id(3)
-							.default_text_style(styleSize: 15)
-							.frame(height: 25)
-							.padding(.horizontal, 20)
-							.padding(.vertical, 15)
-							.background(.white)
-							.cornerRadius(60)
-							.overlay(
-								RoundedRectangle(cornerRadius: 60)
-									.inset(by: 0.5)
-									.stroke(isOutboundProxyFocused ? Color.orangeMain500 : Color.gray200, lineWidth: 1)
-							)
-							.focused($isOutboundProxyFocused)
-					}
-					.padding(.bottom)
-                }
+
 			}
 			.frame(maxWidth: SharedMainViewModel.shared.maxWidth)
 			.padding(.horizontal, 20)

@@ -35,7 +35,7 @@ class AccountLoginViewModel: ObservableObject {
 	@Published var passwd: String = ""
 	@Published var domain: String = ""
 	@Published var displayName: String = ""
-	@Published var transportType: String = "UDP"
+	@Published var transportType: String = "TCP"
 	@Published var authId: String = ""
 	@Published var sipProxyUrl: String = ""
 	@Published var outboundProxy: String = ""
@@ -198,7 +198,7 @@ class AccountLoginViewModel: ObservableObject {
 				
 				DispatchQueue.main.async {
 					self.domain = ""
-					self.transportType = "UDP"
+					self.transportType = "TCP"
 					self.authId = ""
 					self.outboundProxy = ""
 					self.registerEnabled = true
