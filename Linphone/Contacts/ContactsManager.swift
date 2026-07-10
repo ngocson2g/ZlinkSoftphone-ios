@@ -878,7 +878,7 @@ class CSVContactImporter {
                 dispatchGroup.enter()
                 
                 // Check if contact exists by phone number
-                ContactsManager.shared.coreContext.doOnCoreQueue { core in
+                CoreContext.shared.doOnCoreQueue { core in
                     var existingFriend: Friend? = nil
                     
                     // Search in existing lists
@@ -947,7 +947,7 @@ class CSVContactImporter {
             
             dispatchGroup.notify(queue: .main) {
                 // Refresh contacts after import
-                ContactsManager.shared.coreContext.doOnCoreQueue { _ in
+                CoreContext.shared.doOnCoreQueue { _ in
                     MagicSearchSingleton.shared.searchForContacts()
                 }
                 completion(result)
