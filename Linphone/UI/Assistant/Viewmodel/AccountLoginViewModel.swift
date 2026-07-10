@@ -20,18 +20,27 @@
 import linphonesw
 import SwiftUI
 
+// Enum for outbound routing mode
+enum OutboundMode: String, CaseIterable {
+	case domain = "domain"
+	case proxyAddress = "proxyAddress"
+	case targetDomain = "targetDomain"
+}
+
 class AccountLoginViewModel: ObservableObject {
 	
 	private var coreContext = CoreContext.shared
 	
 	@Published var username: String = ""
 	@Published var passwd: String = ""
-	@Published var domain: String = "sip.linphone.org"
+	@Published var domain: String = ""
 	@Published var displayName: String = ""
-	@Published var transportType: String = "TLS"
+	@Published var transportType: String = "UDP"
 	@Published var authId: String = ""
 	@Published var sipProxyUrl: String = ""
 	@Published var outboundProxy: String = ""
+	@Published var registerEnabled: Bool = true
+	@Published var outboundMode: OutboundMode = .domain
 	
 	private var mCoreDelegate: CoreDelegate!
 	
@@ -47,16 +56,24 @@ class AccountLoginViewModel: ObservableObject {
 				return
 			}
 			do {
-				let usernameWithDomain = self.username.split(separator: "@")
+				// Use local variables to avoid async race condition
+				var currentUsername = self.username
+				var currentDomain = self.domain
+				let currentRegisterEnabled = self.registerEnabled
+				let currentOutboundMode = self.outboundMode
+				
+				let usernameWithDomain = currentUsername.split(separator: "@")
 				
 				if usernameWithDomain.count > 1 {
+					currentDomain = String(usernameWithDomain.last ?? "")
+					currentUsername = String(usernameWithDomain.first ?? "")
 					DispatchQueue.main.async {
-						self.domain = String(usernameWithDomain.last ?? "")
-						self.username = String(usernameWithDomain.first ?? "")
+						self.domain = currentDomain
+						self.username = currentUsername
 					}
 				}
 				
-				if self.domain != "sip.linphone.org" {
+				if currentDomain != "sip.linphone.org" {
 					if let assistantLinphone = Bundle.main.path(forResource: "assistant_third_party_default_values", ofType: nil) {
 						core.loadConfigFromXml(xmlUri: assistantLinphone)
 					}
@@ -84,12 +101,12 @@ class AccountLoginViewModel: ObservableObject {
 				// ha1 is set to null as we are using the clear text password. Upon first register, the hash will be computed automatically.
 				// The realm will be determined automatically from the first register, as well as the algorithm
 				let authInfo = try Factory.Instance.createAuthInfo(
-					username: self.username,
+					username: currentUsername,
 					userid: self.authId,
 					passwd: self.passwd,
 					ha1: "",
 					realm: "",
-					domain: self.domain
+					domain: currentDomain
 				)
 				
 				// Account object replaces deprecated ProxyConfig object
@@ -98,7 +115,7 @@ class AccountLoginViewModel: ObservableObject {
 				let accountParams = try core.createAccountParams()
 				
 				// A SIP account is identified by an identity address that we can construct from the username and domain
-				let identity = try Factory.Instance.createAddress(addr: String("sip:" + self.username + "@" + self.domain))
+				let identity = try Factory.Instance.createAddress(addr: String("sip:" + currentUsername + "@" + currentDomain))
 				try accountParams.setIdentityaddress(newValue: identity)
 				
 				// We also need to configure where the proxy server is located
@@ -107,25 +124,36 @@ class AccountLoginViewModel: ObservableObject {
 					let server = self.sipProxyUrl.starts(with: "sip:") ? self.sipProxyUrl : String("sip:" + self.sipProxyUrl)
 					serverAddress = try Factory.Instance.createAddress(addr: server)
 				} else {
-					serverAddress = try Factory.Instance.createAddress(addr: String("sip:" + self.domain))
+					serverAddress = try Factory.Instance.createAddress(addr: String("sip:" + currentDomain))
 				}
 				
 				// We use the Address object to easily set the transport protocol
 				try serverAddress.setTransport(newValue: transport)
 				try accountParams.setServeraddress(newValue: serverAddress)
 				
+				// Handle outbound routing based on selected mode
 				var routeAddress: Address
-				if (!self.outboundProxy.isEmpty) {
-					let server = self.outboundProxy.starts(with: "sip:") ? self.outboundProxy : String("sip:" + self.outboundProxy)
-					routeAddress = try Factory.Instance.createAddress(addr: server)
+				switch currentOutboundMode {
+				case .proxyAddress:
+					if (!self.outboundProxy.isEmpty) {
+						let server = self.outboundProxy.starts(with: "sip:") ? self.outboundProxy : String("sip:" + self.outboundProxy)
+						routeAddress = try Factory.Instance.createAddress(addr: server)
+						try routeAddress.setTransport(newValue: transport)
+						try accountParams.setRoutesaddresses(newValue: [routeAddress])
+					} else {
+						try accountParams.setRoutesaddresses(newValue: [])
+					}
+				case .targetDomain:
+					// Use domain as route
+					routeAddress = try Factory.Instance.createAddress(addr: String("sip:" + currentDomain))
 					try routeAddress.setTransport(newValue: transport)
 					try accountParams.setRoutesaddresses(newValue: [routeAddress])
-				} else {
+				case .domain:
 					try accountParams.setRoutesaddresses(newValue: [])
 				}
 				
-				// And we ensure the account will start the registration process
-				accountParams.registerEnabled = true
+				// Set registration based on user's choice
+				accountParams.registerEnabled = currentRegisterEnabled
 				
 				if accountParams.pushNotificationAllowed {
 					accountParams.pushNotificationAllowed = true
@@ -169,10 +197,12 @@ class AccountLoginViewModel: ObservableObject {
 				core.defaultAccount = account
 				
 				DispatchQueue.main.async {
-					self.domain = "sip.linphone.org"
-					self.transportType = "TLS"
+					self.domain = ""
+					self.transportType = "UDP"
 					self.authId = ""
 					self.outboundProxy = ""
+					self.registerEnabled = true
+					self.outboundMode = .domain
 				}
 				
 			} catch { NSLog(error.localizedDescription) }

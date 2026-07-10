@@ -493,6 +493,11 @@
 "notification_earpiece_enforcement_message" = "Please use the earpiece only. Other audio outputs are disabled.";
 "operation_in_progress_overlay" = "Operation in progress, please wait";
 "or" = "or";
+"register_with_domain_label" = "Register with domain and receive incoming calls";
+"send_outbound_via_label" = "Send outbound via:";
+"outbound_mode_domain" = "domain";
+"outbound_mode_proxy_address" = "proxy Address";
+"outbound_mode_target_domain" = "target domain";
 "password" = "Password";
 "pending_notification_for_other_accounts_single" = "1 notification for other account(s)";
 "pending_notification_for_other_accounts_multiple" = "%@ notifications for other account(s)";

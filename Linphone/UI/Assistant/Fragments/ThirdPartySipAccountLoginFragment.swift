@@ -123,8 +123,8 @@ struct ThirdPartySipAccountLoginFragment: View {
 						.padding(.all, 10)
 						.onTapGesture {
 							withAnimation {
-								accountLoginViewModel.domain = "sip.linphone.org"
-								accountLoginViewModel.transportType = "TLS"
+								accountLoginViewModel.domain = ""
+								accountLoginViewModel.transportType = "UDP"
 								dismiss()
 							}
 						}
@@ -144,6 +144,28 @@ struct ThirdPartySipAccountLoginFragment: View {
 				.padding(.bottom, 20)
 			
 			VStack(alignment: .leading) {
+				// MARK: - Display Name
+				Text(String(localized: "sip_address_display_name"))
+					.default_text_style_700(styleSize: 15)
+					.padding(.bottom, -5)
+				
+				TextField("sip_address_display_name", text: $accountLoginViewModel.displayName)
+					.default_text_style(styleSize: 15)
+					.disableAutocorrection(true)
+					.autocapitalization(.none)
+					.frame(height: 25)
+					.padding(.horizontal, 20)
+					.padding(.vertical, 15)
+					.cornerRadius(60)
+					.overlay(
+						RoundedRectangle(cornerRadius: 60)
+							.inset(by: 0.5)
+							.stroke(isDisplayNameFocused ? Color.orangeMain500 : Color.gray200, lineWidth: 1)
+					)
+					.padding(.bottom)
+					.focused($isDisplayNameFocused)
+				
+				// MARK: - Username
 				Text(String(localized: "username")+"*")
 					.default_text_style_700(styleSize: 15)
 					.padding(.bottom, -5)
@@ -164,6 +186,7 @@ struct ThirdPartySipAccountLoginFragment: View {
 					.padding(.bottom)
 					.focused($isNameFocused)
 				
+				// MARK: - Password
 				Text(String(localized: "password")+"*")
 					.default_text_style_700(styleSize: 15)
 					.padding(.bottom, -5)
@@ -204,11 +227,35 @@ struct ThirdPartySipAccountLoginFragment: View {
 				)
 				.padding(.bottom)
 				
+				// MARK: - Authentication ID
+				Text(String(localized: "authentication_id"))
+					.default_text_style_700(styleSize: 15)
+					.padding(.bottom, -5)
+				
+				TextField("authentication_id", text: $accountLoginViewModel.authId)
+					.id(1)
+					.default_text_style(styleSize: 15)
+					.disableAutocorrection(true)
+					.autocapitalization(.none)
+					.frame(height: 25)
+					.padding(.horizontal, 20)
+					.padding(.vertical, 15)
+					.background(.white)
+					.cornerRadius(60)
+					.overlay(
+						RoundedRectangle(cornerRadius: 60)
+							.inset(by: 0.5)
+							.stroke(isAuthIdFocused ? Color.orangeMain500 : Color.gray200, lineWidth: 1)
+					)
+					.focused($isAuthIdFocused)
+					.padding(.bottom)
+				
+				// MARK: - Domain
 				Text(String(localized: "sip_address_domain")+"*")
 					.default_text_style_700(styleSize: 15)
 					.padding(.bottom, -5)
 				
-				TextField("sip.linphone.org", text: $accountLoginViewModel.domain)
+				TextField("sip_address_domain", text: $accountLoginViewModel.domain)
 					.default_text_style(styleSize: 15)
 					.disableAutocorrection(true)
 					.autocapitalization(.none)
@@ -224,55 +271,104 @@ struct ThirdPartySipAccountLoginFragment: View {
 					.padding(.bottom)
 					.focused($isDomainFocused)
 				
-				Text(String(localized: "sip_address_display_name"))
-					.default_text_style_700(styleSize: 15)
-					.padding(.bottom, -5)
-				
-				TextField("sip_address_display_name", text: $accountLoginViewModel.displayName)
-					.default_text_style(styleSize: 15)
-					.disableAutocorrection(true)
-					.autocapitalization(.none)
-					.frame(height: 25)
-					.padding(.horizontal, 20)
-					.padding(.vertical, 15)
-					.cornerRadius(60)
-					.overlay(
-						RoundedRectangle(cornerRadius: 60)
-							.inset(by: 0.5)
-							.stroke(isDisplayNameFocused ? Color.orangeMain500 : Color.gray200, lineWidth: 1)
-					)
-					.padding(.bottom)
-					.focused($isDisplayNameFocused)
-				
-				Text(String(localized: "assistant_sip_account_transport_protocol"))
-					.default_text_style_700(styleSize: 15)
-					.padding(.bottom, -5)
-				
-				Menu {
-					Button("TLS") {accountLoginViewModel.transportType = "TLS"}
-					Button("TCP") {accountLoginViewModel.transportType = "TCP"}
-					Button("UDP") {accountLoginViewModel.transportType = "UDP"}
-				} label: {
-					Text(accountLoginViewModel.transportType)
-						.default_text_style(styleSize: 15)
-						.frame(maxWidth: .infinity, alignment: .leading)
-					Image("caret-down")
-						.renderingMode(.template)
-						.resizable()
-						.foregroundStyle(Color.grayMain2c500)
-						.frame(width: 20, height: 20)
+				// MARK: - Register with domain checkbox
+				Button(action: {
+					accountLoginViewModel.registerEnabled.toggle()
+				}) {
+					HStack(alignment: .top, spacing: 10) {
+						Image(systemName: accountLoginViewModel.registerEnabled ? "checkmark.square.fill" : "square")
+							.resizable()
+							.frame(width: 22, height: 22)
+							.foregroundColor(accountLoginViewModel.registerEnabled ? Color.orangeMain500 : Color.grayMain2c500)
+						
+						Text("register_with_domain_label")
+							.default_text_style(styleSize: 14)
+							.foregroundStyle(Color.grayMain2c700)
+							.multilineTextAlignment(.leading)
+					}
 				}
-				.frame(height: 25)
-				.padding(.horizontal, 20)
-				.padding(.vertical, 15)
-				.cornerRadius(60)
-				.overlay(
-					RoundedRectangle(cornerRadius: 60)
-						.inset(by: 0.5)
-						.stroke(Color.gray200, lineWidth: 1)
-				)
-				.padding(.bottom)
-                
+				.padding(.bottom, 15)
+				
+				// MARK: - Send outbound via
+				Text("send_outbound_via_label")
+					.default_text_style_700(styleSize: 15)
+					.foregroundStyle(Color.orangeMain500)
+					.padding(.bottom, 5)
+				
+				// Radio: domain
+				Button(action: {
+					accountLoginViewModel.outboundMode = .domain
+				}) {
+					HStack(spacing: 10) {
+						Image(systemName: accountLoginViewModel.outboundMode == .domain ? "largecircle.fill.circle" : "circle")
+							.resizable()
+							.frame(width: 20, height: 20)
+							.foregroundColor(accountLoginViewModel.outboundMode == .domain ? Color.orangeMain500 : Color.grayMain2c500)
+						
+						Text("outbound_mode_domain")
+							.default_text_style(styleSize: 14)
+							.foregroundStyle(Color.grayMain2c700)
+					}
+				}
+				.padding(.bottom, 8)
+				
+				// Radio: proxy Address
+				Button(action: {
+					accountLoginViewModel.outboundMode = .proxyAddress
+				}) {
+					HStack(spacing: 10) {
+						Image(systemName: accountLoginViewModel.outboundMode == .proxyAddress ? "largecircle.fill.circle" : "circle")
+							.resizable()
+							.frame(width: 20, height: 20)
+							.foregroundColor(accountLoginViewModel.outboundMode == .proxyAddress ? Color.orangeMain500 : Color.grayMain2c500)
+						
+						Text("outbound_mode_proxy_address")
+							.default_text_style(styleSize: 14)
+							.foregroundStyle(Color.grayMain2c700)
+					}
+				}
+				.padding(.bottom, 4)
+				
+				// Proxy address text field (shown when proxyAddress mode is selected)
+				if accountLoginViewModel.outboundMode == .proxyAddress {
+					TextField("outbound_mode_proxy_address", text: $accountLoginViewModel.outboundProxy)
+						.id(3)
+						.default_text_style(styleSize: 15)
+						.disableAutocorrection(true)
+						.autocapitalization(.none)
+						.frame(height: 25)
+						.padding(.horizontal, 20)
+						.padding(.vertical, 15)
+						.background(.white)
+						.cornerRadius(60)
+						.overlay(
+							RoundedRectangle(cornerRadius: 60)
+								.inset(by: 0.5)
+								.stroke(isOutboundProxyFocused ? Color.orangeMain500 : Color.gray200, lineWidth: 1)
+						)
+						.focused($isOutboundProxyFocused)
+						.padding(.leading, 30)
+						.padding(.bottom, 4)
+				}
+				
+				// Radio: target domain
+				Button(action: {
+					accountLoginViewModel.outboundMode = .targetDomain
+				}) {
+					HStack(spacing: 10) {
+						Image(systemName: accountLoginViewModel.outboundMode == .targetDomain ? "largecircle.fill.circle" : "circle")
+							.resizable()
+							.frame(width: 20, height: 20)
+							.foregroundColor(accountLoginViewModel.outboundMode == .targetDomain ? Color.orangeMain500 : Color.grayMain2c500)
+						
+						Text("outbound_mode_target_domain")
+							.default_text_style(styleSize: 14)
+							.foregroundStyle(Color.grayMain2c700)
+					}
+				}
+				.padding(.bottom, 15)
+				
+				// MARK: - Advanced Settings (hidden by default, keeps old fields)
                 HStack(alignment: .center) {
                     Text("settings_advanced_title")
                         .default_text_style_800(styleSize: 18)
@@ -297,28 +393,39 @@ struct ThirdPartySipAccountLoginFragment: View {
                 }
                 
                 if advancedSettingsIsOpen {
-                    VStack(alignment: .leading) {
-                        Text("authentication_id")
-                            .default_text_style_700(styleSize: 15)
-                            .padding(.bottom, -5)
-                        
-						TextField("authentication_id", text: $accountLoginViewModel.authId)
-							.id(1)
-                            .default_text_style(styleSize: 15)
-                            .frame(height: 25)
-                            .padding(.horizontal, 20)
-                            .padding(.vertical, 15)
-                            .background(.white)
-                            .cornerRadius(60)
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 60)
-                                    .inset(by: 0.5)
-                                    .stroke(isAuthIdFocused ? Color.orangeMain500 : Color.gray200, lineWidth: 1)
-                            )
-                            .focused($isAuthIdFocused)
+					VStack(alignment: .leading) {
+						// Transport protocol
+						Text(String(localized: "assistant_sip_account_transport_protocol"))
+							.default_text_style_700(styleSize: 15)
+							.padding(.bottom, -5)
+						
+						Menu {
+							Button("TLS") {accountLoginViewModel.transportType = "TLS"}
+							Button("TCP") {accountLoginViewModel.transportType = "TCP"}
+							Button("UDP") {accountLoginViewModel.transportType = "UDP"}
+						} label: {
+							Text(accountLoginViewModel.transportType)
+								.default_text_style(styleSize: 15)
+								.frame(maxWidth: .infinity, alignment: .leading)
+							Image("caret-down")
+								.renderingMode(.template)
+								.resizable()
+								.foregroundStyle(Color.grayMain2c500)
+								.frame(width: 20, height: 20)
+						}
+						.frame(height: 25)
+						.padding(.horizontal, 20)
+						.padding(.vertical, 15)
+						.cornerRadius(60)
+						.overlay(
+							RoundedRectangle(cornerRadius: 60)
+								.inset(by: 0.5)
+								.stroke(Color.gray200, lineWidth: 1)
+						)
+						.padding(.bottom)
                     }
 					.padding(.bottom)
-                    
+					
                     VStack(alignment: .leading) {
                         Text("account_settings_sip_proxy_url_title")
                             .default_text_style_700(styleSize: 15)
