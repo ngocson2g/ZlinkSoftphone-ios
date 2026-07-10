@@ -835,6 +835,12 @@ class CSVContactImporter {
             return
         }
         
+        importCSV(content: content, sourceTag: "[CSV]", completion: completion)
+    }
+    
+    static func importCSV(content: String, sourceTag: String, completion: @escaping (CSVImportResult) -> Void) {
+        var result = CSVImportResult()
+        
         let rows = parseCSV(content: content)
         result.totalParsed = rows.count
         
@@ -903,16 +909,16 @@ class CSVContactImporter {
                         // Merge notes logic
                         let existingNote = "" // friend.vcard doesn't support note directly
                         if !existingNote.isEmpty {
-                            if existingNote.contains("[Device]") || existingNote.contains("[CSV]") {
-                                finalNote = existingNote + "\n[CSV] " + note
+                            if existingNote.contains("[Device]") || existingNote.contains("[CSV]") || existingNote.contains("[Server]") {
+                                finalNote = existingNote + "\n\(sourceTag) " + note
                             } else {
-                                finalNote = "[Device] " + existingNote + "\n[CSV] " + note
+                                finalNote = "[Device] " + existingNote + "\n\(sourceTag) " + note
                             }
                         } else {
-                            finalNote = "[CSV] " + note
+                            finalNote = "\(sourceTag) " + note
                         }
                     } else {
-                        finalNote = !note.isEmpty ? "[CSV] " + note : ""
+                        finalNote = !note.isEmpty ? "\(sourceTag) " + note : ""
                     }
                     
                     let contact = Contact(

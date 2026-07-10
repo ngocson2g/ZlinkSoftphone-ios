@@ -102,6 +102,8 @@ struct ContentView: View {
 	@State private var isShowingCSVImporter = false
 	@State private var isShowingCSVReport = false
 	@State private var csvImportResult = CSVImportResult()
+	@State private var isShowingServerImportPrompt = false
+	@State private var serverCSVURL = ""
 	
 	var body: some View {
 		GeometryReader { geometry in
@@ -675,6 +677,16 @@ struct ContentView: View {
 														} label: {
 															HStack {
 																Text("Import from CSV")
+																Spacer()
+															}
+														}
+														
+														Button {
+															isMenuOpen = false
+															isShowingServerImportPrompt = true
+														} label: {
+															HStack {
+																Text("Import from Server")
 																Spacer()
 															}
 														}
@@ -2147,6 +2159,29 @@ struct ContentView: View {
 		}
 		.sheet(isPresented: $isShowingCSVReport) {
 			CSVImportReportView(isPresented: $isShowingCSVReport, result: csvImportResult)
+		}
+		.alert("Enter Server CSV URL", isPresented: $isShowingServerImportPrompt) {
+			TextField("https://...", text: $serverCSVURL)
+				.keyboardType(.URL)
+				.autocapitalization(.none)
+			Button("Import") {
+				guard let url = URL(string: serverCSVURL) else { return }
+				URLSession.shared.dataTask(with: url) { data, response, error in
+					guard let data = data, let content = String(data: data, encoding: .utf8) else {
+						print("Error downloading CSV: \(String(describing: error))")
+						return
+					}
+					CSVContactImporter.importCSV(content: content, sourceTag: "[Server]") { importResult in
+						DispatchQueue.main.async {
+							self.csvImportResult = importResult
+							self.isShowingCSVReport = true
+						}
+					}
+				}.resume()
+			}
+			Button("Cancel", role: .cancel) { }
+		} message: {
+			Text("The CSV file will be downloaded and merged into your contacts.")
 		}
 	}
 	
