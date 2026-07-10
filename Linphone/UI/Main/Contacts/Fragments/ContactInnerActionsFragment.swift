@@ -196,7 +196,7 @@ struct ContactInnerActionsFragment: View {
 		}
 		
 		
-		if !contactAvatarModel.organization.isEmpty || !contactAvatarModel.jobTitle.isEmpty {
+		if !contactAvatarModel.organization.isEmpty || !contactAvatarModel.jobTitle.isEmpty || !contactAvatarModel.note.isEmpty {
 			VStack {
 				if !contactAvatarModel.organization.isEmpty {
 					Text(.init(String(format:"**%@ :** %@", String(localized: "contact_editor_company"), contactAvatarModel.organization)))
@@ -209,7 +209,16 @@ struct ContactInnerActionsFragment: View {
 				if !contactAvatarModel.jobTitle.isEmpty {
 					Text(.init(String(format:"**%@ :** %@", String(localized: "contact_editor_job_title"), contactAvatarModel.jobTitle)))
 						.default_text_style(styleSize: 14)
-						.padding(.top, !contactAvatarModel.organization.isEmpty ? 0 : 15)
+						.padding(.top, !contactAvatarModel.organization.isEmpty ? 15 : 0)
+						.padding(.bottom, contactAvatarModel.note.isEmpty ? 15 : 0)
+						.padding(.horizontal, 20)
+						.frame(maxWidth: .infinity, alignment: .leading)
+				}
+				
+				if !contactAvatarModel.note.isEmpty {
+					Text(.init(String(format:"**%@ :** %@", "Note", contactAvatarModel.note)))
+						.default_text_style(styleSize: 14)
+						.padding(.top, (!contactAvatarModel.organization.isEmpty || !contactAvatarModel.jobTitle.isEmpty) ? 15 : 0)
 						.padding(.bottom, 15)
 						.padding(.horizontal, 20)
 						.frame(maxWidth: .infinity, alignment: .leading)

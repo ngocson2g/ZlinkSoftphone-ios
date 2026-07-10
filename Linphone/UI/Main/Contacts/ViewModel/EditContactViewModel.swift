@@ -31,6 +31,7 @@ class EditContactViewModel: ObservableObject {
 	@Published var phoneNumbers: [String] = []
 	@Published var company: String = ""
 	@Published var jobTitle: String = ""
+	@Published var note: String = ""
 	
 	init(contactAvatarModel: ContactAvatarModel? = nil) {
 		self.selectedEditFriend = contactAvatarModel
@@ -44,6 +45,7 @@ class EditContactViewModel: ObservableObject {
 			let familyNameTmp = (self.selectedEditFriend == nil ? "" : self.selectedEditFriend!.vcard?.familyName) ?? ""
 			let organizationTmp = self.selectedEditFriend == nil ? "" : self.selectedEditFriend!.organization
 			let jobTitleTmp = self.selectedEditFriend == nil ? "" : self.selectedEditFriend!.jobTitle
+			let noteTmp = self.selectedEditFriend == nil ? "" : self.selectedEditFriend!.refKey ?? ""
 			
 			var sipAddressesTmp: [String] = []
 			var phoneNumbersTmp: [String] = []
@@ -66,6 +68,7 @@ class EditContactViewModel: ObservableObject {
 				self.phoneNumbers = []
 				self.company = organizationTmp
 				self.jobTitle = jobTitleTmp
+				self.note = noteTmp
 				
 				self.sipAddresses = sipAddressesTmp
 				self.phoneNumbers = phoneNumbersTmp

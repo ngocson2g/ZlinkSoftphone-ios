@@ -43,6 +43,7 @@ struct EditContactFragment: View {
 	@FocusState var isPhoneNumberFocused: Int?
 	@FocusState var isCompanyFocused: Bool
 	@FocusState var isJobTitleFocused: Bool
+	@FocusState var isNoteFocused: Bool
 	
 	@State private var showPhotoPicker = false
 	@State private var selectedImage: UIImage?
@@ -460,6 +461,27 @@ struct EditContactFragment: View {
 									.padding(.bottom)
 									.focused($isJobTitleFocused)
 							}
+							
+							VStack(alignment: .leading) {
+								Text("Note")
+									.default_text_style_700(styleSize: 15)
+									.padding(.bottom, -5)
+								
+								TextField("Note", text: $editContactViewModel.note)
+									.default_text_style(styleSize: 15)
+									.frame(height: 25)
+									.padding(.horizontal, 20)
+									.padding(.vertical, 15)
+									.background(.white)
+									.cornerRadius(60)
+									.overlay(
+										RoundedRectangle(cornerRadius: 60)
+											.inset(by: 0.5)
+											.stroke(isNoteFocused ? Color.orangeMain500 : Color.gray200, lineWidth: 1)
+									)
+									.padding(.bottom)
+									.focused($isNoteFocused)
+							}
 						}
 						.frame(maxWidth: SharedMainViewModel.shared.maxWidth)
 						.padding(.horizontal)
@@ -516,7 +538,8 @@ struct EditContactFragment: View {
 				displayName: "",
 				sipAddresses: editContactViewModel.sipAddresses,
 				phoneNumbers: editContactViewModel.phoneNumbers.map { PhoneNumber(numLabel: "", num: $0) },
-				imageData: ""
+				imageData: "",
+				note: editContactViewModel.note
 			)
 			
 			let existingFriend = editContactViewModel.selectedEditFriend?.friend
