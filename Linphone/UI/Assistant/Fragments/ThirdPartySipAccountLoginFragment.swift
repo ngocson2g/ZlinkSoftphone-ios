@@ -24,6 +24,8 @@ struct ThirdPartySipAccountLoginFragment: View {
 	@ObservedObject private var coreContext = CoreContext.shared
 	@ObservedObject var accountLoginViewModel: AccountLoginViewModel
 	
+	var onBackPressed: (() -> Void)?
+	
 	@StateObject private var keyboard = KeyboardResponder()
 	
 	@Environment(\.dismiss) var dismiss
@@ -124,8 +126,12 @@ struct ThirdPartySipAccountLoginFragment: View {
 						.onTapGesture {
 							withAnimation {
 								accountLoginViewModel.domain = ""
-								accountLoginViewModel.transportType = "UDP"
-								dismiss()
+								accountLoginViewModel.transportType = "TCP"
+								if let onBack = onBackPressed {
+									onBack()
+								} else {
+									dismiss()
+								}
 							}
 						}
 					Spacer()

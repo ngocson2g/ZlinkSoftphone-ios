@@ -81,6 +81,7 @@ struct ContentView: View {
 	@State var isShowScheduleMeetingFragmentParticipants: [SelectedAddressModel] = []
 	
 	@State private var isShowLoginFragment: Bool = false
+	@StateObject private var addAccountViewModel = AccountLoginViewModel()
 	
 	private let avatarSize = 45.0
 	@State private var imagePath: URL?
@@ -1259,13 +1260,16 @@ struct ContentView: View {
 					.zIndex(2)
 					
 					if isShowLoginFragment {
-						LoginFragment(
-							isShowBack: true,
-							onBackPressed: {
-								withAnimation {
-									isShowLoginFragment.toggle()
-								}
-							})
+						NavigationView {
+							ThirdPartySipAccountLoginFragment(
+								accountLoginViewModel: addAccountViewModel,
+								onBackPressed: {
+									withAnimation {
+										isShowLoginFragment = false
+									}
+								})
+						}
+						.navigationViewStyle(StackNavigationViewStyle())
 						.zIndex(3)
 						.transition(.move(edge: .bottom))
 						.onAppear {

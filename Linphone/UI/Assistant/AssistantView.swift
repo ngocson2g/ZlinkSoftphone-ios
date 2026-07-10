@@ -22,16 +22,21 @@ import SwiftUI
 struct AssistantView: View {
 	
 	@ObservedObject private var coreContext = CoreContext.shared
+	@StateObject private var accountLoginViewModel = AccountLoginViewModel()
 	
 	var body: some View {
 		if SharedMainViewModel.shared.displayProfileMode && coreContext.loggedIn {
 			ProfileModeFragment()
 		} else {
-			LoginFragment()
+			NavigationView {
+				ThirdPartySipAccountLoginFragment(accountLoginViewModel: accountLoginViewModel)
+			}
+			.navigationViewStyle(StackNavigationViewStyle())
 		}
 	}
 }
 
 #Preview {
-	LoginFragment()
+	AssistantView()
 }
+
