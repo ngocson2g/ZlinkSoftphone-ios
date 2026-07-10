@@ -78,19 +78,11 @@ final class MagicSearchSingleton: ObservableObject {
 				var lastSearchSuggestions: [SearchResult] = []
 				
 				magicSearch.lastSearch.forEach { searchResult in
-                    if searchResult.friend != nil && (searchResult.friend?.friendList?.displayName == self.nativeAddressBookFriendList || searchResult.friend?.friendList?.displayName == self.linphoneAddressBookFriendList || searchResult.friend?.friendList?.displayName == self.tempRemoteAddressBookFriendList) {
-						if let address = searchResult.address,
-						   !lastSearchFriend.contains(where: { $0.address?.weakEqual(address2: address) ?? false }) {
+					if let friend = searchResult.friend {
+						let isDuplicate = lastSearchFriend.contains(where: { $0.friend === friend })
+						if !isDuplicate {
 							lastSearchFriend.append(searchResult)
-						} else if let phoneNumber = searchResult.phoneNumber,
-								  !lastSearchFriend.contains(where: { $0.phoneNumber == phoneNumber }) {
-							lastSearchFriend.append(searchResult)
-						} else if searchResult.address == nil && searchResult.phoneNumber == nil,
-                                  !lastSearchFriend.contains(where: { $0.friend === searchResult.friend }) {
-                            lastSearchFriend.append(searchResult)
-                        }
-					} else if searchResult.friend != nil && (searchResult.hasSourceFlag(source: .RemoteCardDAV) || searchResult.friend?.friendList?.type == .CardDAV || searchResult.hasSourceFlag(source: .LdapServers)) {
-						lastSearchFriend.append(searchResult)
+						}
 					} else {
 						lastSearchSuggestions.append(searchResult)
 					}
@@ -116,35 +108,16 @@ final class MagicSearchSingleton: ObservableObject {
 				
 				var addedAvatarListModel: [ContactAvatarModel] = []
 				sortedLastSearch.forEach { searchResult in
-					if searchResult.friend != nil {
-                        if (searchResult.friend?.friendList?.displayName == self.nativeAddressBookFriendList || searchResult.friend?.friendList?.displayName == self.linphoneAddressBookFriendList || searchResult.friend?.friendList?.displayName == self.tempRemoteAddressBookFriendList) {
-                            addedAvatarListModel.append(
-                                ContactAvatarModel(
-                                    friend: searchResult.friend!,
-                                    name: searchResult.friend?.name ?? "",
-                                    address: searchResult.friend?.address?.clone()?.asStringUriOnly() ?? "",
-                                    withPresence: true
-                                )
-                            )
-						} else if searchResult.hasSourceFlag(source: .RemoteCardDAV) || searchResult.friend?.friendList?.type == .CardDAV {
-							addedAvatarListModel.append(
-								ContactAvatarModel(
-									friend: searchResult.friend!,
-									name: searchResult.friend?.name ?? "",
-									address: searchResult.friend?.address?.clone()?.asStringUriOnly() ?? "",
-									withPresence: true
-								)
+					if let friend = searchResult.friend {
+						let withPresence = !searchResult.hasSourceFlag(source: .LdapServers)
+						addedAvatarListModel.append(
+							ContactAvatarModel(
+								friend: friend,
+								name: friend.name ?? "",
+								address: searchResult.address?.clone()?.asStringUriOnly() ?? "",
+								withPresence: withPresence
 							)
-						} else if searchResult.hasSourceFlag(source: .LdapServers) {
-							addedAvatarListModel.append(
-								ContactAvatarModel(
-									friend: searchResult.friend!,
-									name: searchResult.friend?.name ?? "",
-									address: searchResult.friend?.address?.clone()?.asStringUriOnly() ?? "",
-									withPresence: false
-								)
-							)
-						}
+						)
 					}
 				}
 				
