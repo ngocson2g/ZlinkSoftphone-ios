@@ -345,7 +345,13 @@ final class ContactsManager: ObservableObject {
 				friend.phoneNumbersWithLabel.forEach { friend.removePhoneNumberWithLabel(phoneNumber: $0) }
 				for phone in contact.phoneNumbers {
 					do {
-						let labelDrop = String(phone.numLabel.dropFirst(4).dropLast(4))
+						var labelDrop = phone.numLabel
+						if labelDrop.hasPrefix("_$!<") && labelDrop.hasSuffix(">!$_") {
+							labelDrop = String(labelDrop.dropFirst(4).dropLast(4))
+						}
+                        if labelDrop.isEmpty {
+                            labelDrop = "Mobile"
+                        }
 						let phoneNumber = try Factory.Instance.createFriendPhoneNumber(phoneNumber: phone.num, label: labelDrop)
 						friend.addPhoneNumberWithLabel(phoneNumber: phoneNumber)
 					} catch {
