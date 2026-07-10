@@ -18,10 +18,11 @@
  */
 
 
+import SwiftUI
+import linphonesw
+
 struct ContactsInnerFragment: View {
 	
-import linphonesw
-import SwiftUI
 	@ObservedObject var sharedMainViewModel = SharedMainViewModel.shared
 	@ObservedObject var contactsManager = ContactsManager.shared
 	@ObservedObject var magicSearch = MagicSearchSingleton.shared
