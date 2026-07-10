@@ -488,7 +488,7 @@ struct FullScreenParticlesEffect: View {
 					
 					// Draw connections
 					for i in 0..<system.particles.count {
-						for j in (i+1)...<system.particles.count {
+						for j in (i+1)..<system.particles.count {
 							let p1 = system.particles[i]
 							let p2 = system.particles[j]
 							let dist = hypot(p1.x - p2.x, p1.y - p2.y)
