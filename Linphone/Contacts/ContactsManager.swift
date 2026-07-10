@@ -555,7 +555,7 @@ final class ContactsManager: ObservableObject {
 							let addressTmp = friend.address?.clone()?.asStringUriOnly() ?? ""
 							
 							let newContact = Contact(
-								identifier: UUID().uuidString,
+								identifier: "",
 								firstName: friend.firstName ?? addressTmp,
 								lastName: friend.lastName ?? "",
 								organizationName: friend.organization ?? "",
@@ -642,7 +642,7 @@ final class ContactsManager: ObservableObject {
 								Log.debug("\(ContactsManager.TAG) Newly discovered SIP Address \(addressTmp) for friend \(friend.name ?? "No Name") in bodyless list \(friendList.displayName ?? "No Display Name")")
 								
 								let newContact = Contact(
-									identifier: UUID().uuidString,
+									identifier: "",
 									firstName: friend.name ?? addressTmp,
 									lastName: "",
 									organizationName: "",
@@ -940,7 +940,7 @@ class CSVContactImporter {
                     }
                     
                     let contact = Contact(
-                        identifier: existingFriend?.nativeUri ?? UUID().uuidString,
+                        identifier: existingFriend?.nativeUri ?? "",
                         firstName: firstName,
                         lastName: lastName,
                         organizationName: company,
