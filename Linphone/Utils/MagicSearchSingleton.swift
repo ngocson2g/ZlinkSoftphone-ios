@@ -49,6 +49,8 @@ final class MagicSearchSingleton: ObservableObject {
     let linphoneAddressBookFriendList = "Linphone address-book"
     let tempRemoteAddressBookFriendList = "TempRemoteDirectoryContacts address-book"
 	
+	@Published var importedContactOnly: Bool = false
+	
 	@Published var isLoading = false
 	
 	func destroyMagicSearch() {
@@ -56,11 +58,16 @@ final class MagicSearchSingleton: ObservableObject {
 	}
 	
 	private init() {
-		allContact = AppServices.corePreferences.contactsFilter == ""
+		allContact = AppServices.corePreferences.contactsFilter == "" || AppServices.corePreferences.contactsFilter == "IMPORTED"
+		importedContactOnly = AppServices.corePreferences.contactsFilter == "IMPORTED"
 		
 		coreContext.doOnCoreQueue { core in
 			self.linphoneDomain = AppServices.corePreferences.defaultDomain == core.defaultAccount?.params?.domain
-			self.domainDefaultAccount = AppServices.corePreferences.contactsFilter
+			if self.importedContactOnly || AppServices.corePreferences.contactsFilter == "" {
+				self.domainDefaultAccount = ""
+			} else {
+				self.domainDefaultAccount = AppServices.corePreferences.contactsFilter
+			}
 			
 			self.magicSearch = try? core.createMagicSearch()
 			
@@ -110,14 +117,22 @@ final class MagicSearchSingleton: ObservableObject {
 				sortedLastSearch.forEach { searchResult in
 					if let friend = searchResult.friend {
 						let withPresence = !searchResult.hasSourceFlag(source: .LdapServers)
-						addedAvatarListModel.append(
-							ContactAvatarModel(
-								friend: friend,
-								name: friend.name ?? "",
-								address: searchResult.address?.clone()?.asStringUriOnly() ?? "",
-								withPresence: withPresence
-							)
+						let contactModel = ContactAvatarModel(
+							friend: friend,
+							name: friend.name ?? "",
+							address: searchResult.address?.clone()?.asStringUriOnly() ?? "",
+							withPresence: withPresence
 						)
+						
+						if self.importedContactOnly {
+							// Filter by note containing [CSV] or [Server]
+							let note = friend.vcard?.note ?? ""
+							if note.contains("[CSV]") || note.contains("[Server]") {
+								addedAvatarListModel.append(contactModel)
+							}
+						} else {
+							addedAvatarListModel.append(contactModel)
+						}
 					}
 				}
 				
@@ -132,10 +147,16 @@ final class MagicSearchSingleton: ObservableObject {
 		}
 	}
 	
-	func changeAllContact(allContactBool: Bool) {
+	func changeAllContact(allContactBool: Bool, isImportedOnly: Bool = false) {
 		allContact = allContactBool
-		domainDefaultAccount = allContactBool ? "" : (linphoneDomain ? AppServices.corePreferences.defaultDomain : "*")
-		AppServices.corePreferences.contactsFilter = domainDefaultAccount
+		importedContactOnly = isImportedOnly
+		if isImportedOnly {
+			domainDefaultAccount = ""
+			AppServices.corePreferences.contactsFilter = "IMPORTED"
+		} else {
+			domainDefaultAccount = allContactBool ? "" : (linphoneDomain ? AppServices.corePreferences.defaultDomain : "*")
+			AppServices.corePreferences.contactsFilter = domainDefaultAccount
+		}
 	}
     
     func updateContacts(

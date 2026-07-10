@@ -85,8 +85,8 @@ class CorePreferences: ObservableObject {
 	
 	var contactsFilter: String {
 		get {
-			let raw = config.getString(section: "ui", key: "contacts_filter", defaultString: "")
-			return safeString(raw, defaultValue: "")
+			let raw = config.getString(section: "ui", key: "contacts_filter", defaultString: "IMPORTED")
+			return safeString(raw, defaultValue: "IMPORTED")
 		}
 		set {
 			config.setString(section: "ui", key: "contacts_filter", value: newValue)

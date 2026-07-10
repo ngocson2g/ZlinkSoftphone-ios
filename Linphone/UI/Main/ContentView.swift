@@ -636,13 +636,13 @@ struct ContentView: View {
 														Button {
 															sharedMainViewModel.displayedFriend = nil
 															isMenuOpen = false
-															magicSearch.changeAllContact(allContactBool: true)
+															magicSearch.changeAllContact(allContactBool: true, isImportedOnly: true)
 															magicSearch.searchForContacts()
 														} label: {
 															HStack {
-																Text("contacts_list_filter_popup_see_all")
+																Text("See import contact")
 																Spacer()
-																if magicSearch.allContact {
+																if magicSearch.importedContactOnly {
 																	Image("green-check")
 																		.resizable()
 																		.frame(width: 25, height: 25, alignment: .leading)
@@ -654,13 +654,31 @@ struct ContentView: View {
 														Button {
 															sharedMainViewModel.displayedFriend = nil
 															isMenuOpen = false
-															magicSearch.changeAllContact(allContactBool: false)
+															magicSearch.changeAllContact(allContactBool: true, isImportedOnly: false)
+															magicSearch.searchForContacts()
+														} label: {
+															HStack {
+																Text("contacts_list_filter_popup_see_all")
+																Spacer()
+																if magicSearch.allContact && !magicSearch.importedContactOnly {
+																	Image("green-check")
+																		.resizable()
+																		.frame(width: 25, height: 25, alignment: .leading)
+																		.padding(.all, 10)
+																}
+															}
+														}
+														
+														Button {
+															sharedMainViewModel.displayedFriend = nil
+															isMenuOpen = false
+															magicSearch.changeAllContact(allContactBool: false, isImportedOnly: false)
 															magicSearch.searchForContacts()
 														} label: {
 															HStack {
 																Text(!magicSearch.linphoneDomain ? String(localized: "contacts_list_filter_popup_see_sip_only") : String(format: String(localized: "contacts_list_filter_popup_see_linphone_only"), Bundle.main.displayName))
 																Spacer()
-																if !magicSearch.allContact {
+																if !magicSearch.allContact && !magicSearch.importedContactOnly {
 																	Image("green-check")
 																		.resizable()
 																		.frame(width: 25, height: 25, alignment: .leading)
