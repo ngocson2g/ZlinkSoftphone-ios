@@ -126,7 +126,7 @@ final class MagicSearchSingleton: ObservableObject {
 						
 						if self.importedContactOnly {
 							// Filter by note containing [CSV] or [Server]
-							let note = friend.organization ?? ""
+							let note = friend.refKey ?? ""
 							if note.contains("[CSV]") || note.contains("[Server]") {
 								addedAvatarListModel.append(contactModel)
 							}

@@ -327,11 +327,10 @@ final class ContactsManager: ObservableObject {
 				if let vcard = friend.vcard {
 					vcard.givenName = contact.firstName
 					vcard.familyName = contact.lastName
-				}
-				
 				// Workaround: Vcard in Linphone SDK doesn't expose 'note'.
-				// Store the note in the organization field so it's saved and can be filtered.
-				friend.organization = (contact.organizationName.isEmpty ? "" : contact.organizationName + " - ") + contact.note
+				// Store the note in the refKey field so it's saved silently and can be filtered.
+				friend.refKey = contact.note
+				friend.organization = contact.organizationName
 				friend.jobTitle = contact.jobTitle
 				
 				// Clear existing addresses and add new ones
@@ -925,7 +924,7 @@ class CSVContactImporter {
                     if let existing = existingFriend {
                         result.duplicatePhones.append(phone)
                         // Merge notes logic
-                        let existingNote = "" // friend.vcard doesn't support note directly
+                        let existingNote = existing.refKey ?? ""
                         if !existingNote.isEmpty {
                             if existingNote.contains("[Device]") || existingNote.contains("[CSV]") || existingNote.contains("[Server]") {
                                 finalNote = existingNote + "\n\(sourceTag) " + note
