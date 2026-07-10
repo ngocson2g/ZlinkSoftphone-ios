@@ -117,6 +117,7 @@ struct ThirdPartySipAccountLoginFragment: View {
 				}
 			}
 		}
+		}
 		.navigationTitle("")
 		.navigationBarHidden(true)
 		.edgesIgnoringSafeArea(.bottom)
