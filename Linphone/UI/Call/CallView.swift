@@ -556,6 +556,19 @@ struct CallView: View {
 							Text(callViewModel.remoteAddressCleanedString)
 								.default_text_style_white_300(styleSize: 16)
 						}
+						
+						if let note = callViewModel.avatarModel?.note, !note.isEmpty {
+							ScrollView {
+								Text(note)
+									.default_text_style_white(styleSize: 14)
+									.multilineTextAlignment(.center)
+									.padding(10)
+							}
+							.frame(maxWidth: 300, maxHeight: 150)
+							.background(Color.black.opacity(0.4))
+							.cornerRadius(12)
+							.padding(.top, 10)
+						}
 
 						Spacer()
 					}
