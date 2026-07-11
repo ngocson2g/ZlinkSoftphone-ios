@@ -102,7 +102,7 @@ struct HelpFragment: View {
 									.frame(maxWidth: .infinity, alignment: .leading)
 									.padding(.bottom, 5)
 								Button {
-									if let url = URL(string: NSLocalizedString("website_user_guide_url", comment: "")) {
+									if let url = URL(string: "https://voip.com.vn") {
 										UIApplication.shared.open(url)
 									}
 								} label: {
@@ -135,7 +135,7 @@ struct HelpFragment: View {
 								}
 								
 								Button {
-									if let url = URL(string: NSLocalizedString("website_privacy_policy_url", comment: "")) {
+									if let url = URL(string: "https://voip.com.vn/document/privacy_policy_en.html") {
 										UIApplication.shared.open(url)
 									}
 								} label: {
@@ -243,7 +243,7 @@ struct HelpFragment: View {
 												.frame(maxWidth: .infinity, alignment: .leading)
 												.multilineTextAlignment(.leading)
 											
-											Text("help_about_open_source_licenses_subtitle")
+											Text("Modified by Zlink 2026\n\(String(localized: \"help_about_open_source_licenses_subtitle\"))")
 												.default_text_style(styleSize: 14)
 												.frame(maxWidth: .infinity, alignment: .leading)
 												.multilineTextAlignment(.leading)
@@ -259,7 +259,7 @@ struct HelpFragment: View {
 								}
 								
 								Button {
-									if let url = URL(string: NSLocalizedString("website_translate_weblate_url", comment: "")) {
+									if let url = URL(string: "https://voip.com.vn") {
 										UIApplication.shared.open(url)
 									}
 								} label: {
@@ -283,6 +283,42 @@ struct HelpFragment: View {
 											.frame(width: 25, height: 25)
 									}
 								}
+								
+								Text("Contact Information")
+									.default_text_style_800(styleSize: 16)
+									.frame(maxWidth: .infinity, alignment: .leading)
+									.padding(.top, 20)
+									.padding(.bottom, 5)
+
+								VStack(alignment: .leading, spacing: 5) {
+									Text("Address:")
+										.default_text_style_700(styleSize: 14)
+									Text("- Ha Noi , Viet Nam\n- HCMC , Viet Nam")
+										.default_text_style(styleSize: 14)
+										.padding(.leading, 10)
+									
+									Text("Phone / MS Teams / Whatsapp / Telegram / Zalo / Wechat :")
+										.default_text_style_700(styleSize: 14)
+										.padding(.top, 5)
+									Text("+84988612049")
+										.default_text_style(styleSize: 14)
+										.padding(.leading, 10)
+									
+									Text("Web :")
+										.default_text_style_700(styleSize: 14)
+										.padding(.top, 5)
+									Text("voip.com.vn / azsoft.com")
+										.default_text_style(styleSize: 14)
+										.padding(.leading, 10)
+									
+									Text("Email:")
+										.default_text_style_700(styleSize: 14)
+										.padding(.top, 5)
+									Text("sales@voip.com.vn / sales@azsoft.com")
+										.default_text_style(styleSize: 14)
+										.padding(.leading, 10)
+								}
+								.frame(maxWidth: .infinity, alignment: .leading)
 								
 								Text("help_about_advanced_title")
 									.default_text_style_800(styleSize: 16)
