@@ -467,20 +467,37 @@ struct EditContactFragment: View {
 									.default_text_style_700(styleSize: 15)
 									.padding(.bottom, -5)
 								
-								TextField("Note", text: $editContactViewModel.note)
-									.default_text_style(styleSize: 15)
-									.frame(height: 25)
-									.padding(.horizontal, 20)
-									.padding(.vertical, 15)
-									.background(.white)
-									.cornerRadius(60)
-									.overlay(
-										RoundedRectangle(cornerRadius: 60)
-											.inset(by: 0.5)
-											.stroke(isNoteFocused ? Color.orangeMain500 : Color.gray200, lineWidth: 1)
-									)
-									.padding(.bottom)
-									.focused($isNoteFocused)
+								if #available(iOS 16.0, *) {
+									TextField("Note", text: $editContactViewModel.note, axis: .vertical)
+										.default_text_style(styleSize: 15)
+										.lineLimit(3...8)
+										.padding(.horizontal, 20)
+										.padding(.vertical, 15)
+										.background(.white)
+										.cornerRadius(20)
+										.overlay(
+											RoundedRectangle(cornerRadius: 20)
+												.inset(by: 0.5)
+												.stroke(isNoteFocused ? Color.orangeMain500 : Color.gray200, lineWidth: 1)
+										)
+										.padding(.bottom)
+										.focused($isNoteFocused)
+								} else {
+									TextEditor(text: $editContactViewModel.note)
+										.default_text_style(styleSize: 15)
+										.frame(height: 100)
+										.padding(.horizontal, 15)
+										.padding(.vertical, 10)
+										.background(.white)
+										.cornerRadius(20)
+										.overlay(
+											RoundedRectangle(cornerRadius: 20)
+												.inset(by: 0.5)
+												.stroke(isNoteFocused ? Color.orangeMain500 : Color.gray200, lineWidth: 1)
+										)
+										.padding(.bottom)
+										.focused($isNoteFocused)
+								}
 							}
 						}
 						.frame(maxWidth: SharedMainViewModel.shared.maxWidth)
