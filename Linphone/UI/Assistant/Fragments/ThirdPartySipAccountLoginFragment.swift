@@ -173,6 +173,7 @@ struct ThirdPartySipAccountLoginFragment: View {
 					.frame(height: 25)
 					.padding(.horizontal, 20)
 					.padding(.vertical, 15)
+					.background(Color.white)
 					.cornerRadius(60)
 					.overlay(
 						RoundedRectangle(cornerRadius: 60)
@@ -194,6 +195,7 @@ struct ThirdPartySipAccountLoginFragment: View {
 					.frame(height: 25)
 					.padding(.horizontal, 20)
 					.padding(.vertical, 15)
+					.background(Color.white)
 					.cornerRadius(60)
 					.overlay(
 						RoundedRectangle(cornerRadius: 60)
@@ -236,6 +238,7 @@ struct ThirdPartySipAccountLoginFragment: View {
 				}
 				.padding(.horizontal, 20)
 				.padding(.vertical, 15)
+				.background(Color.white)
 				.cornerRadius(60)
 				.overlay(
 					RoundedRectangle(cornerRadius: 60)
@@ -279,6 +282,7 @@ struct ThirdPartySipAccountLoginFragment: View {
 					.frame(height: 25)
 					.padding(.horizontal, 20)
 					.padding(.vertical, 15)
+					.background(Color.white)
 					.cornerRadius(60)
 					.overlay(
 						RoundedRectangle(cornerRadius: 60)
@@ -399,7 +403,11 @@ struct ThirdPartySipAccountLoginFragment: View {
 				self.accountLoginViewModel.login()
 			}, label: {
 				Text("assistant_account_login")
-					.default_text_style_white_600(styleSize: 20)
+					.text_style(
+						fontSize: 20,
+						fontWeight: 800,
+						fontColor: (accountLoginViewModel.username.isEmpty || accountLoginViewModel.passwd.isEmpty || accountLoginViewModel.domain.isEmpty) ? Color.grayMain2c600 : Color.white
+					)
 					.frame(height: 35)
 					.frame(maxWidth: .infinity)
 			})
