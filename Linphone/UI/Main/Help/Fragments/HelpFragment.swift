@@ -243,7 +243,7 @@ struct HelpFragment: View {
 												.frame(maxWidth: .infinity, alignment: .leading)
 												.multilineTextAlignment(.leading)
 											
-											Text("Modified by Zlink 2026\n\(String(localized: \"help_about_open_source_licenses_subtitle\"))")
+											Text("Modified by Zlink 2026\n" + String(localized: "help_about_open_source_licenses_subtitle"))
 												.default_text_style(styleSize: 14)
 												.frame(maxWidth: .infinity, alignment: .leading)
 												.multilineTextAlignment(.leading)
