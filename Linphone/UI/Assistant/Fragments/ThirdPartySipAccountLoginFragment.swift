@@ -155,10 +155,16 @@ struct ThirdPartySipAccountLoginFragment: View {
 			.padding(.top, 10)
 			.padding(.bottom, 5)
 			
-			Text("assistant_login_third_party_sip_account_subtitle")
-				.default_text_style(styleSize: 14)
-				.foregroundStyle(Color.grayMain2c500)
-				.padding(.bottom, 20)
+			Button(action: {
+				if let url = URL(string: "https://voip.com.vn/document/getsipacc.html") {
+					UIApplication.shared.open(url)
+				}
+			}) {
+				Text("assistant_login_third_party_sip_account_subtitle")
+					.default_text_style(styleSize: 14)
+					.foregroundStyle(Color.grayMain2c500)
+			}
+			.padding(.bottom, 20)
 			
 			VStack(alignment: .leading) {
 				// MARK: - Display Name
