@@ -183,6 +183,11 @@ class CoreContext: ObservableObject {
 
 			self.mCore = try? Factory.Instance.createSharedCoreWithConfig(config: AppServices.config, systemContext: Unmanaged.passUnretained(coreQueue).toOpaque(), appGroupId: SharedMainViewModel.appGroupName, mainCore: true)
 
+			guard self.mCore != nil else {
+				Log.error("[CoreContext] CRITICAL: Failed to create shared core! appGroupId=\(SharedMainViewModel.appGroupName). Check that the App Group is correctly configured in entitlements, provisioning profile, and that linphonerc config files are present in the bundle.")
+				return
+			}
+
 			MDMManager.shared.applyMdmConfigToCore(core: self.mCore)
 			self.startObservingMDMConfigurationUpdates()
 			
@@ -519,7 +524,10 @@ class CoreContext: ObservableObject {
 	func onEnterForeground() {
 		coreQueue.async {
 			Log.info("[onEnterForegroundOrBackground] Entering foreground")
-			
+			guard self.mCore != nil else {
+				Log.warn("[onEnterForegroundOrBackground] Core is nil, skipping foreground handling")
+				return
+			}
 			try? self.mCore.start()
 		}
 	}
@@ -527,7 +535,10 @@ class CoreContext: ObservableObject {
 	func onEnterBackground() {
 		coreQueue.async {
 			Log.info("[onEnterForegroundOrBackground] Entering background, un-PUBLISHING presence info")
-			
+			guard self.mCore != nil else {
+				Log.warn("[onEnterForegroundOrBackground] Core is nil, skipping background handling")
+				return
+			}
 			self.updatePresence(core: self.mCore, presence: .Offline)
 			self.mCore.iterate()
 			

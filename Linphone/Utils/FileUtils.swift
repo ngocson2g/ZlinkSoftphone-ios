@@ -88,7 +88,10 @@ class FileUtil: NSObject {
 		?? {
 			fatalError("APP_GROUP_NAME not defined in Info.plist")
 		}()
-		return FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupName)!
+		guard let url = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupName) else {
+			fatalError("Cannot access shared container for App Group '\(appGroupName)'. Ensure this App Group is enabled in both the Entitlements file and the Provisioning Profile on Apple Developer Portal.")
+		}
+		return url
 	}
 	
 	public class func ensureDirectoryExists(path: String) {
